@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#12372a" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta
+      name="description"
+      content="PDV Mercado: sistema para vendas, estoque, caixa, relatórios e backup em pequenos mercados."
+    />
+    <title>PDV Mercado | Vendas, estoque e caixa</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="#inicio" aria-label="PDV Mercado — início">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M3 4h2l1.8 10.2a2 2 0 0 0 2 1.7h8.7a2 2 0 0 0 1.9-1.5L21 8H7" />
+              <circle cx="10" cy="20" r="1.25" />
+              <circle cx="18" cy="20" r="1.25" />
+            </svg>
+          </span>
+          <span>PDV <strong>Mercado</strong></span>
+        </a>
+
+        <nav class="main-nav" aria-label="Navegação principal">
+          <a href="#recursos">Recursos</a>
+          <a href="#requisitos">Requisitos</a>
+          <a class="nav-download" href="/downloads/PDV-Mercado-Setup-1.0.0.exe" download>
+            Baixar versão 1.0.0
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="conteudo">
+      <section class="hero" id="inicio">
+        <div class="hero-glow hero-glow-one" aria-hidden="true"></div>
+        <div class="hero-glow hero-glow-two" aria-hidden="true"></div>
+
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">
+              <span class="eyebrow-dot" aria-hidden="true"></span>
+              Feito para a rotina do mercadinho
+            </p>
+            <h1>Vendas, estoque e caixa <span>em um só lugar.</span></h1>
+            <p class="hero-text">
+              Um sistema direto ao ponto para registrar vendas, organizar produtos e
+              acompanhar o movimento do caixa no computador da loja.
+            </p>
+
+            <div class="hero-actions">
+              <a class="button button-primary" href="/downloads/PDV-Mercado-Setup-1.0.0.exe" download>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 3v12m0 0 5-5m-5 5-5-5M5 20h14" />
+                </svg>
+                Baixar para Windows
+              </a>
+              <a class="button button-secondary" href="#recursos">Conhecer os recursos</a>
+            </div>
+
+            <ul class="hero-notes" aria-label="Informações do sistema">
+              <li>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
+                Funciona sem internet
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
+                Windows 10 e 11
+              </li>
+            </ul>
+          </div>
+
+          <div class="preview-wrap" aria-label="Prévia ilustrativa da interface do sistema">
+            <div class="preview-label">Prévia da interface</div>
+            <div class="app-window">
+              <div class="window-bar">
+                <div class="window-brand">
+                  <span class="mini-logo" aria-hidden="true"></span>
+                  <span>PDV Mercado</span>
+                </div>
+                <div class="window-actions" aria-hidden="true">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+
+              <div class="app-layout">
+                <aside class="app-sidebar" aria-hidden="true">
+                  <span class="side-item active"><i></i>Venda</span>
+                  <span class="side-item"><i></i>Produtos</span>
+                  <span class="side-item"><i></i>Caixa</span>
+                  <span class="side-item"><i></i>Relatórios</span>
+                </aside>
+
+                <div class="app-content">
+                  <div class="app-heading">
+                    <div>
+                      <small>Frente de caixa</small>
+                      <strong>Nova venda</strong>
+                    </div>
+                    <span class="cash-status"><i></i> Caixa aberto</span>
+                  </div>
+
+                  <div class="search-mock">Buscar produto ou código...</div>
+
+                  <div class="sale-table">
+                    <div class="sale-row sale-head">
+                      <span>Produto</span><span>Qtd.</span><span>Valor</span>
+                    </div>
+                    <div class="sale-row">
+                      <span><i class="product-dot orange"></i>Item selecionado</span><span>2</span><span>R$ 11,80</span>
+                    </div>
+                    <div class="sale-row">
+                      <span><i class="product-dot green"></i>Item selecionado</span><span>1</span><span>R$ 8,90</span>
+                    </div>
+                    <div class="sale-row muted-row">
+                      <span><i class="product-dot cream"></i>Item selecionado</span><span>1</span><span>R$ 6,50</span>
+                    </div>
+                  </div>
+
+                  <div class="sale-summary">
+                    <div>
+                      <small>Total da venda</small>
+                      <strong>R$ 27,20</strong>
+                    </div>
+                    <span>Finalizar venda</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="floating-card stock-card" aria-hidden="true">
+              <span class="floating-icon">
+                <svg viewBox="0 0 24 24"><path d="m4 8 8-4 8 4-8 4-8-4Zm0 0v8l8 4 8-4V8M12 12v8" /></svg>
+              </span>
+              <span><small>Estoque</small><strong>Organizado</strong></span>
+            </div>
+
+            <div class="floating-card backup-card" aria-hidden="true">
+              <span class="floating-icon light">
+                <svg viewBox="0 0 24 24"><path d="M5 12a7 7 0 1 0 2-5M5 3v4h4" /></svg>
+              </span>
+              <span><small>Dados</small><strong>Backup local</strong></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="trust-strip" aria-label="Principais áreas do sistema">
+        <div class="container trust-grid">
+          <span>Frente de caixa</span>
+          <i aria-hidden="true"></i>
+          <span>Controle de estoque</span>
+          <i aria-hidden="true"></i>
+          <span>Relatórios</span>
+          <i aria-hidden="true"></i>
+          <span>Backup local</span>
+        </div>
+      </section>
+
+      <section class="features section" id="recursos">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow dark">Recursos essenciais</p>
+            <h2>O necessário para cuidar da operação diária.</h2>
+            <p>Uma visão clara do que entra, do que sai e do que ainda está disponível.</p>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature-card feature-large">
+              <div class="feature-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM4 10h16M8 15h3M16 14v2" /></svg>
+              </div>
+              <div>
+                <span class="feature-number">01</span>
+                <h3>Vendas rápidas no balcão</h3>
+                <p>Registre os itens e finalize a compra com uma operação simples e objetiva.</p>
+              </div>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon soft-green">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 8 8-4 8 4-8 4-8-4Zm0 0v8l8 4 8-4V8M12 12v8" /></svg>
+              </div>
+              <span class="feature-number">02</span>
+              <h3>Produtos e estoque</h3>
+              <p>Cadastre produtos e acompanhe as quantidades disponíveis para venda.</p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon soft-yellow">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v12H4zM4 10h16M8 15h3" /></svg>
+              </div>
+              <span class="feature-number">03</span>
+              <h3>Abertura e fechamento</h3>
+              <p>Organize o movimento do caixa do início ao fim do expediente.</p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon soft-blue">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V9m7 10V5m7 14v-7M3 19h18" /></svg>
+              </div>
+              <span class="feature-number">04</span>
+              <h3>Relatórios</h3>
+              <p>Consulte as informações registradas para acompanhar a rotina do negócio.</p>
+            </article>
+
+            <article class="feature-card feature-wide">
+              <div class="feature-icon soft-coral">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12a7 7 0 1 0 2-5M5 3v4h4M9 12h6" /></svg>
+              </div>
+              <div>
+                <span class="feature-number">05</span>
+                <h3>Backup local</h3>
+                <p>Faça uma cópia dos dados da loja para guardar em um local seguro.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="download-section section" id="requisitos">
+        <div class="container download-panel">
+          <div class="download-copy">
+            <p class="eyebrow light">Versão 1.0.0</p>
+            <h2>Pronto para instalar no computador da loja.</h2>
+            <p>
+              Baixe o instalador, execute no Windows e comece a configurar os produtos do mercado.
+            </p>
+
+            <div class="requirements">
+              <div>
+                <span class="requirement-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M3 4.5 10.5 3v8H3V4.5Zm9-1.8L21 1v10h-9V2.7ZM3 12.5h7.5v8L3 19v-6.5Zm9 0h9V23l-9-1.8v-8.7Z" /></svg>
+                </span>
+                <span><small>Compatibilidade</small><strong>Windows 10 e 11 · 64 bits</strong></span>
+              </div>
+              <div>
+                <span class="requirement-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M8 18h8M10 22h4M7 2h10a2 2 0 0 1 2 2v10a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V4a2 2 0 0 1 2-2Z" /></svg>
+                </span>
+                <span><small>Funcionamento</small><strong>Instalado no computador</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="download-card">
+            <span class="download-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 20h14" /></svg>
+            </span>
+            <p>Instalador para Windows</p>
+            <h3>PDV Mercado 1.0.0</h3>
+            <a class="button button-download" href="/downloads/PDV-Mercado-Setup-1.0.0.exe" download>
+              Baixar instalador
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+            </a>
+            <p class="download-hint">Arquivo .exe · Windows 64 bits</p>
+            <a class="download-zip" href="/downloads/PDV-Mercado-Setup-1.0.0.zip" download>
+              Preferir arquivo compactado (.zip)
+            </a>
+
+            <div class="checksum">
+              <div>
+                <span>Verificação SHA-256</span>
+                <code id="checksum-value">B246703B1C205B51AD7C7686B0B424E27A9F17205CA50065129CD55565503A42</code>
+              </div>
+              <button id="copy-checksum" type="button" aria-label="Copiar código de verificação">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8h11v11H8zM5 16H4V4h12v1" /></svg>
+                <span>Copiar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="notice-section">
+        <div class="container notice">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 8h.01" /></svg>
+          <p>
+            <strong>Informação importante:</strong> esta versão é um sistema de controle interno não fiscal.
+            Ela não emite NFC-e, NF-e, SAT ou cupom fiscal.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <a class="brand footer-brand" href="#inicio" aria-label="PDV Mercado — voltar ao início">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M3 4h2l1.8 10.2a2 2 0 0 0 2 1.7h8.7a2 2 0 0 0 1.9-1.5L21 8H7" /><circle cx="10" cy="20" r="1.25" /><circle cx="18" cy="20" r="1.25" /></svg>
+          </span>
+          <span>PDV <strong>Mercado</strong></span>
+        </a>
+        <p>© <span id="current-year">2026</span> PDV Mercado.</p>
+      </div>
+    </footer>
+  </body>
+</html>
