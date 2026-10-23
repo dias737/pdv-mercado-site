@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#123b34" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta
+      name="description"
+      content="Demonstração visual do Mercado 360, uma plataforma de gestão para mercados e redes varejistas."
+    />
+    <title>Mercado 360 — Gestão inteligente para o varejo</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23123b34'/%3E%3Cpath d='M17 45V19h8l7 12 7-12h8v26h-8V31l-7 11-7-11v14z' fill='%23d8f596'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
+
+    <div class="demo-strip" role="note">
+      <span class="demo-strip__dot" aria-hidden="true"></span>
+      Demonstração visual — dados fictícios
+    </div>
+
+    <div class="app-shell">
+      <div class="sidebar-backdrop" data-close-menu></div>
+
+      <aside class="sidebar" id="sidebar" aria-label="Navegação principal">
+        <div class="brand">
+          <div class="brand__mark" aria-hidden="true">
+            <span>M</span>
+            <i>360</i>
+          </div>
+          <div>
+            <strong>Mercado <b>360</b></strong>
+            <small>Gestão para varejo</small>
+          </div>
+        </div>
+
+        <div class="store-switcher">
+          <div class="store-switcher__icon" aria-hidden="true">MC</div>
+          <div>
+            <small>Loja selecionada</small>
+            <strong>Mercadinho Central</strong>
+            <span>Matriz • São Paulo</span>
+          </div>
+          <button class="icon-button icon-button--quiet" type="button" data-demo-action="Troca de loja" aria-label="Trocar loja">
+            <span aria-hidden="true">⌄</span>
+          </button>
+        </div>
+
+        <nav class="primary-nav" id="primary-nav" aria-label="Módulos do sistema"></nav>
+
+        <div class="sidebar__footer">
+          <div class="operation-status">
+            <span class="status-pulse" aria-hidden="true"></span>
+            <div>
+              <strong>Operação normal</strong>
+              <small>Última atualização 14:32</small>
+            </div>
+          </div>
+          <button class="support-link" type="button" data-demo-action="Central de ajuda">
+            <span aria-hidden="true">?</span>
+            Central de ajuda
+          </button>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div class="topbar__start">
+            <button class="menu-toggle icon-button" id="menu-toggle" type="button" aria-label="Abrir menu" aria-controls="sidebar" aria-expanded="false">
+              <span></span><span></span><span></span>
+            </button>
+            <div class="global-search" id="global-search-wrap">
+              <span class="global-search__icon" aria-hidden="true"></span>
+              <label class="sr-only" for="global-search">Buscar no sistema</label>
+              <input
+                id="global-search"
+                type="search"
+                autocomplete="off"
+                placeholder="Buscar produto, cliente ou módulo…"
+                aria-controls="search-results"
+                aria-expanded="false"
+              />
+              <kbd>⌘ K</kbd>
+              <div class="search-results" id="search-results" role="listbox" aria-label="Resultados da busca"></div>
+            </div>
+          </div>
+
+          <div class="topbar__actions">
+            <button class="quick-sale-button" type="button" data-open-sale>
+              <span aria-hidden="true">＋</span>
+              <span>Nova venda</span>
+            </button>
+            <button class="icon-button notification-button" type="button" data-demo-action="Central de notificações" aria-label="Notificações">
+              <span aria-hidden="true">♢</span>
+              <i>4</i>
+            </button>
+            <button class="profile-button" type="button" data-demo-action="Menu do perfil" aria-label="Abrir perfil de Mariana Costa">
+              <span class="avatar">MC</span>
+              <span class="profile-button__copy">
+                <strong>Mariana Costa</strong>
+                <small>Administradora</small>
+              </span>
+              <span aria-hidden="true">⌄</span>
+            </button>
+          </div>
+        </header>
+
+        <main class="content" id="main-content" tabindex="-1">
+          <div id="page-content" aria-live="polite"></div>
+        </main>
+      </section>
+    </div>
+
+    <div class="modal" id="sale-modal" role="dialog" aria-modal="true" aria-labelledby="sale-modal-title" hidden>
+      <div class="modal__backdrop" data-close-sale></div>
+      <div class="sale-panel">
+        <header class="sale-panel__header">
+          <div>
+            <span class="eyebrow">Venda demonstrativa</span>
+            <h2 id="sale-modal-title">Nova venda</h2>
+          </div>
+          <button class="icon-button" type="button" data-close-sale aria-label="Fechar nova venda">×</button>
+        </header>
+
+        <div class="sale-panel__body">
+          <section class="product-picker">
+            <label for="sale-search">Localizar item</label>
+            <div class="sale-search">
+              <span aria-hidden="true"></span>
+              <input id="sale-search" type="search" placeholder="Código de barras ou descrição" autocomplete="off" />
+              <kbd>F2</kbd>
+            </div>
+            <p class="field-help">Clique em um produto para adicionar ao carrinho.</p>
+            <div class="sale-categories" aria-label="Categorias">
+              <button class="chip is-active" type="button">Todos</button>
+              <button class="chip" type="button">Mercearia</button>
+              <button class="chip" type="button">Hortifruti</button>
+              <button class="chip" type="button">Bebidas</button>
+            </div>
+            <div class="product-grid" id="sale-products"></div>
+          </section>
+
+          <aside class="cart" aria-label="Carrinho da venda">
+            <div class="cart__heading">
+              <div>
+                <span class="eyebrow">Cupom atual</span>
+                <h3>Itens da venda</h3>
+              </div>
+              <span class="cart-count" id="cart-count">0 itens</span>
+            </div>
+            <div class="cart-items" id="cart-items"></div>
+            <div class="cart-empty" id="cart-empty">
+              <span aria-hidden="true">▧</span>
+              <strong>O carrinho está vazio</strong>
+              <small>Adicione um produto para iniciar.</small>
+            </div>
+            <div class="cart-summary">
+              <div><span>Subtotal</span><strong id="cart-subtotal">R$ 0,00</strong></div>
+              <div><span>Descontos</span><strong class="positive">R$ 0,00</strong></div>
+              <div class="cart-summary__total"><span>Total</span><strong id="cart-total">R$ 0,00</strong></div>
+              <button class="primary-button primary-button--wide" id="finish-sale" type="button" disabled>
+                Ir para pagamento
+                <span aria-hidden="true">→</span>
+              </button>
+              <small class="demo-disclaimer">Simulação visual: nenhuma cobrança ou registro será realizado.</small>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+    <script src="./app.js"></script>
+  </body>
+</html>
