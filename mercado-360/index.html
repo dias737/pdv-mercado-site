@@ -3,22 +3,23 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#123b34" />
+    <meta name="theme-color" content="#14243b" />
     <meta name="robots" content="noindex, nofollow" />
     <meta
       name="description"
       content="Demonstração visual do Mercado 360, uma plataforma de gestão para mercados e redes varejistas."
     />
-    <title>Mercado 360 — Gestão inteligente para o varejo</title>
+    <title>Mercado 360 — Gestão de operações do varejo</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23123b34'/%3E%3Cpath d='M17 45V19h8l7 12 7-12h8v26h-8V31l-7 11-7-11v14z' fill='%23d8f596'/%3E%3C/svg%3E" />
-    <link rel="stylesheet" href="./styles.css?v=caixa-teclado-1" />
+    <link rel="stylesheet" href="./styles.css?v=rede-1" />
+    <link rel="stylesheet" href="./enterprise.css?v=rede-1" />
   </head>
   <body>
     <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
 
     <div class="demo-strip" role="note">
       <span class="demo-strip__dot" aria-hidden="true"></span>
-      Demonstração visual — dados fictícios
+      AMBIENTE DE DEMONSTRAÇÃO · OPERAÇÕES E VALORES ILUSTRATIVOS
     </div>
 
     <div class="app-shell">
@@ -32,18 +33,18 @@
           </div>
           <div>
             <strong>Mercado <b>360</b></strong>
-            <small>Gestão para varejo</small>
+            <small>Gestão corporativa</small>
           </div>
         </div>
 
         <div class="store-switcher">
           <div class="store-switcher__icon" aria-hidden="true">MC</div>
           <div>
-            <small>Loja selecionada</small>
-            <strong>Mercadinho Central</strong>
-            <span>Matriz • São Paulo</span>
+            <small>Organização</small>
+            <strong>Rede Central</strong>
+            <span>4 unidades · São Paulo</span>
           </div>
-          <button class="icon-button icon-button--quiet" type="button" data-demo-action="Troca de loja" aria-label="Trocar loja">
+          <button class="icon-button icon-button--quiet" type="button" data-go-page="filiais" aria-label="Consultar unidades">
             <span aria-hidden="true">⌄</span>
           </button>
         </div>
@@ -67,6 +68,7 @@
 
       <section class="workspace">
         <header class="topbar">
+          <div class="enterprise-breadcrumb"><strong>RETAGUARDA</strong><span>Central de operações</span></div>
           <div class="topbar__start">
             <button class="menu-toggle icon-button" id="menu-toggle" type="button" aria-label="Abrir menu" aria-controls="sidebar" aria-expanded="false">
               <span></span><span></span><span></span>
@@ -117,21 +119,23 @@
       <div class="modal__backdrop" data-close-sale></div>
       <div class="sale-panel">
         <header class="sale-panel__header">
-          <div>
-            <span class="eyebrow">Venda demonstrativa</span>
+          <div class="pos-brand"><span class="pos-brand__mark">M<span>360</span></span><div>
+            <span class="eyebrow">Rede Central · Loja 001 — Matriz</span>
             <h2 id="sale-modal-title">Frente de caixa</h2>
-            <p class="cashier-operator">CX-01 · Mariana Costa · Pronto para atender</p>
-          </div>
-          <button class="icon-button" type="button" data-close-sale aria-label="Sair do caixa">×</button>
+          </div></div>
+          <div class="pos-session"><div><span>TERMINAL</span><strong>PDV 001</strong></div><div><span>OPERADORA</span><strong>Mariana Costa</strong></div><div><span>AMBIENTE</span><strong class="pos-demo-state">Demonstração</strong></div></div>
+          <button class="pos-back" type="button" data-close-sale aria-label="Sair do caixa">Retaguarda <kbd>Esc</kbd></button>
         </header>
-
+        <div class="pos-context"><span><b id="pos-sale-stage">CAIXA LIVRE</b><i>•</i> Cupom demonstrativo <strong>#008742</strong></span><span>Consumidor não identificado <i>•</i> Tabela de preços: varejo</span><button type="button" id="load-sample-sale">Carregar venda de exemplo</button></div>
         <div class="sale-panel__body">
           <section class="product-picker">
-            <label for="sale-search">Localizar item</label>
+            <div class="pos-current"><span class="pos-caption">ITEM SELECIONADO</span><strong id="pos-product-name">Caixa disponível</strong><small id="pos-product-code">Aguardando leitura de produto</small><div class="pos-unit-values"><span>QUANTIDADE<strong id="pos-product-quantity">—</strong></span><span>VALOR UNITÁRIO<strong id="pos-product-unit">R$ 0,00</strong></span></div></div>
+            <label for="sale-search">Entrada de produto <span>F2</span></label>
             <div class="sale-search">
               <span aria-hidden="true"></span>
               <input id="sale-search" type="search" placeholder="Código de barras ou descrição" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="sale-products" aria-expanded="true" aria-describedby="sale-search-help" aria-keyshortcuts="F2" />
               <kbd>F2</kbd>
+              <div class="product-grid" id="sale-products" role="listbox" aria-label="Produtos encontrados" hidden></div>
             </div>
             <p class="field-help" id="sale-search-help">Digite ou leia o código de barras. Use ↑ ↓ para escolher e Enter para adicionar.</p>
             <div class="sale-categories" aria-label="Categorias">
@@ -140,35 +144,32 @@
               <button class="chip" type="button">Hortifruti</button>
               <button class="chip" type="button">Bebidas</button>
             </div>
-            <div class="product-grid" id="sale-products" role="listbox" aria-label="Produtos encontrados"></div>
             <p class="cashier-status" id="sale-status" role="status" aria-live="polite">Caixa pronto. Digite um produto para começar.</p>
-            <div class="cashier-tip"><strong>Atendimento sem mouse</strong><span>O foco volta à busca após cada item. Um leitor configurado como teclado com Enter pode preencher o código.</span><small>Experimente o código 7891035001284</small></div>
+            <div class="cart-summary">
+              <div><span>Subtotal</span><strong id="cart-subtotal">R$ 0,00</strong></div>
+              <div><span>Desconto <kbd>F4</kbd></span><strong class="positive" id="cart-discount">R$ 0,00</strong></div>
+              <div class="cart-summary__total"><span>TOTAL A PAGAR</span><strong id="cart-total">R$ 0,00</strong></div>
+              <button class="primary-button primary-button--wide" id="finish-sale" type="button" disabled>Finalizar venda <kbd>F9</kbd></button>
+            </div>
           </section>
 
           <aside class="cart" aria-label="Carrinho da venda">
             <div class="cart__heading">
               <div>
-                <span class="eyebrow">Cupom atual</span>
-                <h3>Itens da venda</h3>
+                <span class="eyebrow">Registro de mercadorias</span>
+                <h3>Cupom de venda</h3>
               </div>
               <span class="cart-count" id="cart-count">0 itens</span>
             </div>
-            <div class="cart-items" id="cart-items"></div>
+            <div class="pos-receipt-head" aria-hidden="true"><span>ITEM</span><span>DESCRIÇÃO / EAN</span><span>QTD.</span><span>VL. UNIT.</span><span>TOTAL</span></div>
+            <div class="cart-items" id="cart-items" role="list" aria-label="Itens do cupom"></div>
             <div class="cart-empty" id="cart-empty">
               <span aria-hidden="true">▧</span>
-              <strong>O carrinho está vazio</strong>
-              <small>Adicione um produto para iniciar.</small>
+              <strong>Caixa livre</strong>
+              <small>Leia um código de barras ou pressione F2 para iniciar uma venda.</small>
             </div>
-            <div class="cart-summary">
-              <div><span>Subtotal</span><strong id="cart-subtotal">R$ 0,00</strong></div>
-              <div><span>Desconto <kbd>F4</kbd></span><strong class="positive" id="cart-discount">R$ 0,00</strong></div>
-              <div class="cart-summary__total"><span>Total</span><strong id="cart-total">R$ 0,00</strong></div>
-              <button class="primary-button primary-button--wide" id="finish-sale" type="button" disabled>
-                Ir para pagamento
-                <kbd>F9</kbd>
-              </button>
-              <small class="demo-disclaimer">Simulação visual: nenhuma cobrança ou registro será realizado.</small>
-            </div>
+            <div class="pos-receipt-footer"><span><b id="pos-line-count">0</b> itens no cupom</span><span>Selecione um item com <kbd>F6</kbd> e ↑ ↓</span></div>
+            <div class="pos-services"><span><i></i> Terminal em demonstração</span><span>Impressora: simulada</span><span>Fiscal / TEF: sem conexão</span></div>
           </aside>
         </div>
         <nav class="cashier-shortcuts" aria-label="Atalhos do caixa">
@@ -199,6 +200,6 @@
     </div>
 
     <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
-    <script src="./app.js?v=caixa-teclado-1"></script>
+    <script src="./app.js?v=rede-1"></script>
   </body>
 </html>

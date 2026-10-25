@@ -7,7 +7,7 @@
   const navGroups = [
     {
       label: "Visão geral",
-      items: [{ id: "dashboard", label: "Dashboard", icon: "⌂" }],
+      items: [{ id: "dashboard", label: "Central de operações", icon: "⌂" }],
     },
     {
       label: "Operação",
@@ -326,7 +326,7 @@
       ],
       columns: ["Unidade", "Cidade", "Responsável", "Vendas hoje", "Faturamento", "Margem", "Operação"],
       rows: [
-        ["Mercadinho Central — Matriz", "São Paulo / SP", "Mariana Costa", "326", "R$ 18.742,60", "28,4%", "<span class=\"badge badge--success\">Aberta</span>"],
+        ["Rede Central — Matriz", "São Paulo / SP", "Mariana Costa", "326", "R$ 18.742,60", "28,4%", "<span class=\"badge badge--success\">Aberta</span>"],
         ["Unidade Norte", "São Paulo / SP", "Eduardo Ramos", "248", "R$ 14.180,40", "27,9%", "<span class=\"badge badge--success\">Aberta</span>"],
         ["Unidade Leste", "São Paulo / SP", "Camila Ferreira", "221", "R$ 13.204,80", "29,1%", "<span class=\"badge badge--success\">Aberta</span>"],
         ["Unidade Bairro Novo", "Guarulhos / SP", "Renata Dias", "97", "R$ 6.712,20", "26,8%", "<span class=\"badge\">Fechada</span>"],
@@ -372,6 +372,25 @@
   const cashierFields = document.querySelector("#cashier-action-fields");
   const cashierError = document.querySelector("#cashier-action-error");
 
+  function navIcon(id) {
+    const paths = {
+      dashboard: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+      vendas: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8m-4-4v4M7 8h10m-10 4h4"/>',
+      produtos: '<path d="m12 3 9 5v9l-9 5-9-5V8l9-5Zm0 10 9-5M12 13 3 8m9 5v9M7 5l10 6"/>',
+      estoque: '<path d="m3 9 9-6 9 6v12H3V9Zm4 4h10v8M7 17h10"/>',
+      compras: '<path d="M3 3h2l3 12h10l3-9H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/>',
+      fornecedores: '<path d="M3 4h12v13H3V4Zm12 5h4l3 4v4h-7"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/>',
+      financeiro: '<rect x="3" y="5" width="18" height="15" rx="2"/><path d="M3 9h18m-5 5h5M7 5V3h11"/>',
+      clientes: '<circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 5a3 3 0 0 1 0 6m2 4a5 5 0 0 1 3 6"/>',
+      fiscal: '<path d="M5 3h10l4 4v14H5V3Zm10 0v5h4M8 12h8m-8 4h6"/>',
+      equipe: '<circle cx="12" cy="7" r="3"/><path d="M6 21v-3a6 6 0 0 1 12 0v3M3 11v5m18-5v5"/>',
+      relatorios: '<path d="M4 3v18h17M8 17v-5m5 5V7m5 10V4"/>',
+      filiais: '<path d="M4 21V9h7v12M11 21V3h9v18M2 21h20M7 13v1m0 3v1m8-11h2m-2 4h2m-2 4h2"/>',
+      configuracoes: '<path d="M4 6h16M4 12h16M4 18h16"/><rect x="7" y="4" width="3" height="4" rx="1"/><rect x="14" y="10" width="3" height="4" rx="1"/><rect x="8" y="16" width="3" height="4" rx="1"/>',
+    };
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[id] || paths.dashboard}</svg>`;
+  }
+
   function renderNavigation() {
     primaryNav.innerHTML = navGroups
       .map(
@@ -381,7 +400,7 @@
             .map(
               (item) => `
                 <button class="nav-item" type="button" data-page="${item.id}" ${item.id === activePage ? 'aria-current="page"' : ""}>
-                  <span class="nav-item__icon" aria-hidden="true">${item.icon}</span>
+                  <span class="nav-item__icon" aria-hidden="true">${navIcon(item.id)}</span>
                   <span class="nav-item__label">${item.label}</span>
                   ${item.badge ? `<span class="nav-item__badge">${item.badge}</span>` : ""}
                 </button>`,
@@ -395,7 +414,7 @@
   const prototypeFooter = () => `
     <footer class="prototype-footer">
       <span><strong>Mercado 360</strong> • Protótipo para apresentação. Nenhuma venda, pagamento ou emissão fiscal é realizada.</span>
-      <span>Mercadinho Central • Dados fictícios</span>
+      <span>Rede Central • Dados fictícios</span>
     </footer>
   `;
 
@@ -411,147 +430,69 @@
       </article>`;
   }
 
+  const networkUnits = [
+    { id: "matriz", code: "001", name: "Matriz", city: "São Paulo · Centro", manager: "Mariana Costa", revenue: 18742.60, sales: 326, margin: 28.4, goal: 23000, open: true, registers: 3 },
+    { id: "norte", code: "002", name: "Unidade Norte", city: "São Paulo · Zona Norte", manager: "Eduardo Ramos", revenue: 14180.40, sales: 248, margin: 27.9, goal: 17500, open: true, registers: 3 },
+    { id: "leste", code: "003", name: "Unidade Leste", city: "São Paulo · Zona Leste", manager: "Camila Ferreira", revenue: 13204.80, sales: 221, margin: 29.1, goal: 16000, open: true, registers: 3 },
+    { id: "bairro", code: "004", name: "Bairro Novo", city: "Guarulhos · Bairro Novo", manager: "Renata Dias", revenue: 6712.20, sales: 97, margin: 26.8, goal: 8500, open: false, registers: 0 },
+  ];
+  let networkScope = "all";
+  let networkView = "overview";
+
   function renderDashboard() {
+    const units = networkScope === "all" ? networkUnits : networkUnits.filter((unit) => unit.id === networkScope);
+    const revenue = units.reduce((sum, unit) => sum + unit.revenue, 0);
+    const sales = units.reduce((sum, unit) => sum + unit.sales, 0);
+    const goal = units.reduce((sum, unit) => sum + unit.goal, 0);
+    const margin = units.reduce((sum, unit) => sum + unit.revenue * unit.margin, 0) / revenue;
+    const attainment = revenue / goal * 100;
+    const number = (value, digits = 1) => value.toLocaleString("pt-BR", {minimumFractionDigits: digits, maximumFractionDigits: digits});
+    const kpi = (label, value, change, note) => `<article class="network-kpi"><span>${label}</span><strong>${value}</strong><small><b>${change}</b> ${note}</small></article>`;
+    const unitRows = units.map((unit) => `<tr>
+      <td><div class="network-unit"><b>${unit.code}</b><div><strong>${unit.name}</strong><small>${unit.city}</small></div></div></td>
+      <td><span class="badge ${unit.open ? "badge--success" : ""}">${unit.open ? "Em operação" : "Encerrada"}</span></td>
+      <td class="network-money">${formatMoney(unit.revenue)}</td><td>${unit.sales}</td>
+      <td><div class="network-goal"><i><b style="width:${Math.min(100, unit.revenue / unit.goal * 100)}%"></b></i><span>${number(unit.revenue / unit.goal * 100)}%</span></div></td>
+      <td>${number(unit.margin)}%</td><td>${unit.registers} / 4</td>
+    </tr>`).join("");
     pageContent.innerHTML = `
       <section class="page-enter" aria-labelledby="dashboard-title">
         <header class="page-header">
-          <div>
-            <span class="eyebrow">Visão consolidada</span>
-            <h1 id="dashboard-title">Boa tarde, Mariana</h1>
-            <p>Acompanhe a operação do Mercadinho Central em tempo real demonstrativo.</p>
-          </div>
-          <div class="page-header__actions">
-            <select class="date-filter demo-filter" aria-label="Período do painel">
-              <option>Hoje, 23 de outubro</option>
-              <option>Últimos 7 dias</option>
-              <option>Este mês</option>
-            </select>
-            <button class="secondary-button" type="button" data-demo-action="Exportar resumo do dashboard">⇩ Exportar resumo</button>
-            <button class="primary-button" type="button" data-open-sale>＋ Nova venda</button>
-          </div>
+          <div><span class="eyebrow">GESTÃO DA REDE / VISÃO CONSOLIDADA</span><h1 id="dashboard-title">Central de operações</h1><p>Resultado comercial, desempenho das lojas e prioridades da operação.</p></div>
+          <div class="page-header__actions"><button class="secondary-button" type="button" data-go-page="relatorios">Relatórios gerenciais</button><button class="primary-button" type="button" data-open-sale>Abrir frente de caixa <kbd>F2</kbd></button></div>
         </header>
-
-        <div class="kpi-grid" aria-label="Indicadores principais">
-          ${metricCard("Faturamento hoje", "R$ 18.742,60", '<span class="trend-up">↗ 8,7%</span><span>sobre ontem</span>', "R$", true)}
-          ${metricCard("Vendas", "326", '<span class="trend-up">↗ 5,2%</span><span>sobre ontem</span>', "#")}
-          ${metricCard("Ticket médio", "R$ 57,49", '<span class="trend-up">↗ 3,1%</span><span>no período</span>', "TM")}
-          ${metricCard("Margem bruta", "28,4%", '<span class="trend-up">↗ 1,2 p.p.</span><span>sobre a meta</span>', "%")}
-          ${metricCard("Estoque crítico", "14 itens", '<span class="trend-down">4 urgentes</span><span>para hoje</span>', "!")}
-          ${metricCard("Caixas", "3 abertos", '<span class="trend-neutral">1 fechado</span><span>no momento</span>', "CX")}
+        <div class="network-filterbar">
+          <div class="network-tabs" role="tablist" aria-label="Visões da central">
+            <button type="button" role="tab" aria-selected="${networkView === "overview"}" class="${networkView === "overview" ? "is-active" : ""}" data-network-view="overview">Visão executiva</button>
+            <button type="button" role="tab" aria-selected="${networkView === "operations"}" class="${networkView === "operations" ? "is-active" : ""}" data-network-view="operations">Operação de lojas</button>
+          </div>
+          <div class="network-filters"><select class="select-control" id="network-scope" aria-label="Unidade do painel"><option value="all"${networkScope === "all" ? " selected" : ""}>Todas as unidades</option>${networkUnits.map((unit) => `<option value="${unit.id}"${networkScope === unit.id ? " selected" : ""}>${unit.code} · ${unit.name}</option>`).join("")}</select><span class="date-filter">23 out. 2026 · 14:32</span></div>
         </div>
-
-        <div class="dashboard-alerts" aria-label="Alertas da operação">
-          <article class="inline-alert inline-alert--red">
-            <span class="inline-alert__icon" aria-hidden="true">!</span>
-            <div><strong>14 produtos abaixo do estoque mínimo</strong><small>4 itens podem romper ainda hoje.</small></div>
-            <button type="button" data-go-page="estoque">Ver estoque →</button>
-          </article>
-          <article class="inline-alert">
-            <span class="inline-alert__icon" aria-hidden="true">R$</span>
-            <div><strong>2 contas vencidas no financeiro</strong><small>Total fictício de R$ 1.842,90.</small></div>
-            <button type="button" data-go-page="financeiro">Analisar →</button>
-          </article>
-          <article class="inline-alert inline-alert--blue">
-            <span class="inline-alert__icon" aria-hidden="true">↙</span>
-            <div><strong>4 recebimentos programados hoje</strong><small>Próxima entrega demonstrativa às 16:30.</small></div>
-            <button type="button" data-go-page="compras">Ver agenda →</button>
-          </article>
+        <div class="network-kpis">
+          ${kpi("Faturamento do dia", formatMoney(revenue), "↗ 6,4%", "vs. dia anterior")}
+          ${kpi("Vendas realizadas", sales.toLocaleString("pt-BR"), "↗ 5,2%", "vs. dia anterior")}
+          ${kpi("Ticket médio", formatMoney(revenue / sales), "↗ 1,1%", "vs. dia anterior")}
+          ${kpi("Margem bruta", number(margin) + "%", "Meta: 28,0%", "sobre as vendas")}
         </div>
-
-        <div class="dashboard-grid">
-          <article class="card card--span-8">
-            <header class="card__header">
-              <div><h2>Desempenho de vendas</h2><p>Faturamento diário • valores fictícios</p></div>
-              <div class="segmented-control" aria-label="Período do gráfico">
-                <button class="is-active" type="button">7 dias</button>
-                <button type="button">30 dias</button>
-                <button type="button">12 meses</button>
+        ${networkView === "operations" ? `
+          <div class="register-grid">${units.map((unit) => `<article class="register-tile"><header><h3>${unit.code} · ${unit.name}</h3><span class="badge ${unit.open ? "badge--success" : ""}">${unit.open ? "Aberta" : "Fechada"}</span></header><p>${unit.manager}</p><strong>${unit.registers} <small>caixas ativos</small></strong><footer><span>${unit.sales} vendas</span><span>${formatMoney(unit.revenue)}</span></footer></article>`).join("")}</div>` : `
+          <div class="network-main">
+            <article class="card"><header class="card__header"><div><h2>Evolução do faturamento</h2><p>Distribuição por hora · unidades selecionadas</p></div><span class="badge badge--blue">${number(attainment)}% da meta</span></header>
+              <div class="network-chart"><div class="network-chart__summary"><div><strong>${formatMoney(revenue)}</strong><small>Meta diária: ${formatMoney(goal)}</small></div><div class="network-legend"><span>Dia selecionado</span><span>Dia anterior</span></div></div>
+                <div class="retail-chart" role="img" aria-label="Faturamento por hora, de 08h a 14h. Maior movimento às 13h. Total de ${formatMoney(revenue)}."><div class="retail-chart__axis"><span>15 mil</span><span>10 mil</span><span>5 mil</span><span>0</span></div><div class="retail-chart__bars">${[2150,4800,6340,8120,10540,12050,8840].map((amount,index) => `<div class="retail-bar" title="${index+8}h: ${formatMoney(amount * revenue / 52840)}"><i style="height:${amount / 15000 * 87 * revenue / 52840}%"></i><i style="height:${amount / 15000 * 100 * revenue / 52840}%"></i><span>${String(index+8).padStart(2,"0")}h</span></div>`).join("")}</div></div>
               </div>
-            </header>
-            <div class="card__body">
-              <div class="revenue-summary">
-                <div><strong>R$ 116.480,20</strong><small><span class="trend-up">↗ 6,8%</span> comparado aos 7 dias anteriores</small></div>
-                <div class="legend"><span><i></i>Período atual</span><span><i></i>Anterior</span></div>
-              </div>
-              <div class="line-chart" aria-label="Gráfico de faturamento dos últimos sete dias">
-                <svg viewBox="0 0 720 190" role="img" aria-label="Linha de vendas de sexta a quinta-feira">
-                  <defs>
-                    <linearGradient id="revenue-fill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stop-color="#176050" stop-opacity="0.22"></stop>
-                      <stop offset="100%" stop-color="#176050" stop-opacity="0"></stop>
-                    </linearGradient>
-                  </defs>
-                  <line class="chart-grid-line" x1="18" y1="24" x2="704" y2="24"></line>
-                  <line class="chart-grid-line" x1="18" y1="70" x2="704" y2="70"></line>
-                  <line class="chart-grid-line" x1="18" y1="116" x2="704" y2="116"></line>
-                  <line class="chart-grid-line" x1="18" y1="162" x2="704" y2="162"></line>
-                  <path class="chart-comparison" d="M18,130 C75,112 90,119 124,104 S203,89 228,95 S312,112 332,98 S415,74 438,83 S520,97 544,79 S625,72 704,68"></path>
-                  <path class="chart-area" d="M18,144 C62,133 86,121 124,126 S190,110 228,101 S292,106 332,84 S400,65 438,72 S501,53 544,59 S624,35 704,43 L704,170 L18,170 Z"></path>
-                  <path class="chart-line" d="M18,144 C62,133 86,121 124,126 S190,110 228,101 S292,106 332,84 S400,65 438,72 S501,53 544,59 S624,35 704,43"></path>
-                  <circle class="chart-point" cx="18" cy="144" r="4"></circle>
-                  <circle class="chart-point" cx="124" cy="126" r="4"></circle>
-                  <circle class="chart-point" cx="228" cy="101" r="4"></circle>
-                  <circle class="chart-point" cx="332" cy="84" r="4"></circle>
-                  <circle class="chart-point" cx="438" cy="72" r="4"></circle>
-                  <circle class="chart-point" cx="544" cy="59" r="4"></circle>
-                  <circle class="chart-point" cx="704" cy="43" r="5"></circle>
-                </svg>
-                <div class="chart-labels"><span>Sex, 17</span><span>Sáb, 18</span><span>Dom, 19</span><span>Seg, 20</span><span>Ter, 21</span><span>Qua, 22</span><span>Hoje</span></div>
-              </div>
-            </div>
-          </article>
-
-          <article class="card card--span-4">
-            <header class="card__header">
-              <div><h2>Vendas por canal</h2><p>Participação no faturamento de hoje</p></div>
-              <button class="outline-button outline-button--compact" type="button" data-demo-action="Detalhes dos canais">Detalhes</button>
-            </header>
-            <div class="card__body channel-layout">
-              <div class="donut" aria-label="69 por cento frente de caixa, 18 por cento delivery, 13 por cento encomendas">
-                <div class="donut__copy"><strong>326</strong><small>vendas</small></div>
-              </div>
-              <div class="channel-list">
-                <div class="channel-item"><span>Frente de caixa</span><strong>69%</strong><div class="channel-item__bar"><i style="width:69%"></i></div></div>
-                <div class="channel-item"><span>Delivery</span><strong>18%</strong><div class="channel-item__bar"><i style="width:18%"></i></div></div>
-                <div class="channel-item"><span>Encomendas</span><strong>13%</strong><div class="channel-item__bar"><i style="width:13%"></i></div></div>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="dashboard-grid">
-          <article class="card card--span-7">
-            <header class="card__header">
-              <div><h2>Produtos com maior saída</h2><p>Quantidade vendida hoje</p></div>
-              <button class="outline-button outline-button--compact" type="button" data-go-page="produtos">Ver produtos</button>
-            </header>
-            <div class="card__body card__body--flush data-table-wrap">
-              <table class="data-table">
-                <thead><tr><th>Produto</th><th>Categoria</th><th>Qtd.</th><th>Faturamento</th><th>Estoque</th></tr></thead>
-                <tbody>
-                  <tr><td><div class="table-primary"><span class="product-thumb">AR</span><div><strong>Arroz Boa Mesa 5kg</strong><small>SKU 001284</small></div></div></td><td>Mercearia</td><td><strong>48 un.</strong></td><td>R$ 1.339,20</td><td><div class="stock-level"><div class="stock-level__copy"><span>184 un.</span><span>76%</span></div><div class="stock-level__bar"><i style="width:76%"></i></div></div></td></tr>
-                  <tr><td><div class="table-primary"><span class="product-thumb product-thumb--amber">CA</span><div><strong>Café Serra 500g</strong><small>SKU 001892</small></div></div></td><td>Mercearia</td><td><strong>41 un.</strong></td><td>R$ 758,09</td><td><div class="stock-level stock-level--low"><div class="stock-level__copy"><span>12 un.</span><span>18%</span></div><div class="stock-level__bar"><i style="width:18%"></i></div></div></td></tr>
-                  <tr><td><div class="table-primary"><span class="product-thumb product-thumb--blue">LE</span><div><strong>Leite Integral Vale 1L</strong><small>SKU 000441</small></div></div></td><td>Laticínios</td><td><strong>39 un.</strong></td><td>R$ 225,81</td><td><div class="stock-level stock-level--medium"><div class="stock-level__copy"><span>96 un.</span><span>48%</span></div><div class="stock-level__bar"><i style="width:48%"></i></div></div></td></tr>
-                  <tr><td><div class="table-primary"><span class="product-thumb product-thumb--violet">SB</span><div><strong>Sabão em Pó Limpex 1,6kg</strong><small>SKU 002103</small></div></div></td><td>Limpeza</td><td><strong>27 un.</strong></td><td>R$ 591,30</td><td><div class="stock-level"><div class="stock-level__copy"><span>44 un.</span><span>62%</span></div><div class="stock-level__bar"><i style="width:62%"></i></div></div></td></tr>
-                </tbody>
-              </table>
-            </div>
-          </article>
-
-          <article class="card card--span-5">
-            <header class="card__header">
-              <div><h2>Atividade recente</h2><p>Movimentações da operação</p></div>
-              <button class="outline-button outline-button--compact" type="button" data-demo-action="Histórico de atividades">Histórico</button>
-            </header>
-            <div class="card__body activity-list">
-              <div class="activity-item"><span class="activity-item__icon">R$</span><div><strong>Venda #008741 concluída</strong><small>Ana Souza • Pix • R$ 84,70</small></div><time>14:31</time></div>
-              <div class="activity-item"><span class="activity-item__icon">↙</span><div><strong>Recebimento parcialmente conferido</strong><small>Pedido PC-2026-0380 • 16 de 18 itens</small></div><time>14:18</time></div>
-              <div class="activity-item"><span class="activity-item__icon">!</span><div><strong>Estoque mínimo atingido</strong><small>Café Tradicional Serra 500g • 12 unidades</small></div><time>13:56</time></div>
-              <div class="activity-item"><span class="activity-item__icon">CX</span><div><strong>Caixa CX-04 fechado</strong><small>Rafael Nunes • saldo R$ 1.550,80</small></div><time>13:10</time></div>
-              <div class="activity-item"><span class="activity-item__icon">↔</span><div><strong>Transferência separada</strong><small>Matriz → Unidade Norte • 6 itens</small></div><time>12:44</time></div>
-            </div>
-          </article>
-        </div>
+            </article>
+            <article class="card"><header class="card__header"><div><h2>Prioridades da operação</h2><p>Pendências da rede · cenário demonstrativo</p></div><span class="badge badge--warning">23</span></header><div class="network-tasks">
+              <button class="network-task" type="button" data-go-page="estoque"><i>14</i><span><strong>Risco de ruptura</strong><small>4 itens exigem reposição prioritária</small></span><span>›</span></button>
+              <button class="network-task" type="button" data-go-page="compras"><i>7</i><span><strong>Pedidos de compra pendentes</strong><small>3 aprovações e 4 recebimentos</small></span><span>›</span></button>
+              <button class="network-task" type="button" data-go-page="financeiro"><i>2</i><span><strong>Títulos financeiros vencidos</strong><small>Saldo pendente: R$ 1.842,90</small></span><span>›</span></button>
+            </div></article>
+          </div>`}
+        <article class="card">
+          <header class="card__header"><div><h2>Desempenho por unidade</h2><p>Faturamento, margem e capacidade de atendimento</p></div><button class="outline-button outline-button--compact" type="button" data-go-page="filiais">Gestão de filiais →</button></header>
+          <div class="data-table-wrap"><table class="data-table"><thead><tr><th>UNIDADE</th><th>STATUS</th><th>FATURAMENTO</th><th>VENDAS</th><th>ATINGIMENTO</th><th>MARGEM</th><th>CAIXAS</th></tr></thead><tbody>${unitRows}</tbody></table></div>
+          <footer class="network-foot"><span><b>${units.length}</b> unidades selecionadas</span><span><b>${units.filter((unit) => unit.open).length}</b> em operação</span><span><b>${units.reduce((sum,unit) => sum + unit.registers,0)}</b> caixas ativos</span><span>Última posição: 14:32 · Dados ilustrativos</span></footer>
+        </article>
         ${prototypeFooter()}
       </section>`;
   }
@@ -758,6 +699,8 @@
           .join("")
       : '<div class="search-empty">Nenhum produto fictício encontrado.</div>';
     selectProduct(0);
+    saleProductsEl.hidden = !query.trim();
+    saleSearch.setAttribute("aria-expanded", String(!saleProductsEl.hidden));
   }
 
   function selectProduct(index, moveFocus = false) {
@@ -812,6 +755,11 @@
       button.tabIndex = selected ? 0 : -1;
       if (selected && moveFocus) button.focus();
     });
+    const currentProduct = saleProducts.find((product) => product.id === selectedCartId);
+    document.querySelector("#pos-product-name").textContent = currentProduct?.name || "Caixa disponível";
+    document.querySelector("#pos-product-code").textContent = currentProduct ? `EAN ${currentProduct.code} · ${currentProduct.category}` : "Aguardando leitura de produto";
+    document.querySelector("#pos-product-quantity").textContent = currentProduct ? `${cart.get(selectedCartId).toLocaleString("pt-BR", {maximumFractionDigits: 3})} ${selectedCartId === "p4" ? "kg" : "UN"}` : "—";
+    document.querySelector("#pos-product-unit").textContent = formatMoney(currentProduct?.price || 0);
   }
 
   function addSaleProduct(id) {
@@ -842,21 +790,21 @@
     discountCents = amounts.discount;
 
     itemsEl.innerHTML = entries
-      .map(([id, quantity]) => {
+      .map(([id, quantity], index) => {
         const product = saleProducts.find((item) => item.id === id);
         return `
-          <div class="cart-item" data-cart-id="${id}">
-            <div>
+          <div class="cart-item" data-cart-id="${id}" role="listitem">
+            <span class="pos-item-number">${String(index + 1).padStart(3, "0")}</span>
               <button type="button" class="cart-item__select" data-select-cart="${id}" aria-pressed="false">
                 <strong>${product.name}</strong>
-                <small>${formatMoney(product.price)} / ${id === "p4" ? "kg" : "un."} · F3 quantidade</small>
+                <small>${product.code} · ${id === "p4" ? "KG" : "UN"}</small>
               </button>
               <div class="quantity-control" aria-label="Quantidade de ${product.name}">
                 <button type="button" data-cart-change="-1" data-product-id="${id}" aria-label="Diminuir quantidade de ${product.name}">−</button>
                 <span>${quantity.toLocaleString("pt-BR", { maximumFractionDigits: 3 })}</span>
                 <button type="button" data-cart-change="1" data-product-id="${id}" aria-label="Aumentar quantidade de ${product.name}">＋</button>
               </div>
-            </div>
+            <span class="pos-item-unit">${formatMoney(product.price)}</span>
             <span class="cart-item__price">${formatMoney(product.price * quantity)}</span>
           </div>`;
       })
@@ -864,6 +812,8 @@
     emptyEl.style.display = entries.length ? "none" : "grid";
     itemsEl.style.display = entries.length ? "block" : "none";
     countEl.textContent = `${entries.length} ${entries.length === 1 ? "produto" : "produtos"}`;
+    document.querySelector("#pos-line-count").textContent = entries.length;
+    document.querySelector("#pos-sale-stage").textContent = entries.length ? "VENDA EM ANDAMENTO" : "CAIXA LIVRE";
     subtotalEl.textContent = formatMoney(amounts.subtotal / 100);
     document.querySelector("#cart-discount").textContent = formatMoney(amounts.discount / 100);
     totalEl.textContent = formatMoney(amounts.total / 100);
@@ -1041,12 +991,27 @@
 
   function cashierShortcut(key) {
     if (key === "F2") { focusSaleSearch(); return; }
+    saleProductsEl.hidden = true;
+    saleSearch.setAttribute("aria-expanded", "false");
     if (key === "F6") {
       if (requireCart()) selectCart(selectedCartId, true);
       return;
     }
     const actions = { F3: "quantity", F4: "discount", F7: "cancel", F8: "remove", F9: "payment", F10: "help" };
     if (actions[key]) openCashierAction(actions[key]);
+  }
+
+  function loadSampleSale() {
+    if (cart.size) {
+      announceSale("Conclua a venda atual ou use F7 para cancelar antes de carregar o exemplo.");
+      return;
+    }
+    [["p1", 2], ["p2", 1], ["p3", 6], ["p4", 1.25], ["p5", 2]].forEach(([id, quantity]) => cart.set(id, quantity));
+    discountCents = 380;
+    selectedCartId = "p5";
+    renderCart();
+    resetProductSearch();
+    announceSale("Venda de exemplo carregada. Use F6 para selecionar um item ou F9 para finalizar.");
   }
 
   function renderGlobalSearch(query) {
@@ -1085,6 +1050,13 @@
   }
 
   document.addEventListener("click", (event) => {
+    const networkTab = event.target.closest("[data-network-view]");
+    if (networkTab) {
+      networkView = networkTab.dataset.networkView;
+      renderDashboard();
+      document.querySelector(`[data-network-view="${networkView}"]`).focus();
+      return;
+    }
     const pageButton = event.target.closest("[data-page], [data-go-page]");
     if (pageButton) {
       navigate(pageButton.dataset.page || pageButton.dataset.goPage);
@@ -1193,6 +1165,11 @@
   });
 
   document.addEventListener("change", (event) => {
+    if (event.target.id === "network-scope") {
+      networkScope = event.target.value;
+      renderDashboard();
+      document.querySelector("#network-scope").focus();
+    }
     if (event.target.id === "payment-method") {
       cashierError.hidden = true;
       updatePayment();
@@ -1220,6 +1197,11 @@
       if (event.key === "Escape") {
         event.preventDefault();
         if (cashierAction) closeCashierAction();
+        else if (!saleProductsEl.hidden) {
+          saleProductsEl.hidden = true;
+          saleSearch.setAttribute("aria-expanded", "false");
+          focusSaleSearch();
+        }
         else closeSale();
         return;
       }
@@ -1241,14 +1223,18 @@
         const fromCart = event.target.closest("[data-select-cart]");
         if ((event.target === saleSearch || fromProduct) && ["ArrowDown", "ArrowUp"].includes(event.key)) {
           event.preventDefault();
+          const wasHidden = saleProductsEl.hidden;
+          saleProductsEl.hidden = false;
+          saleSearch.setAttribute("aria-expanded", "true");
           if (fromProduct) selectedProductIndex = [...saleProductsEl.querySelectorAll("[data-add-product]")].indexOf(fromProduct);
-          selectProduct(selectedProductIndex + (event.key === "ArrowDown" ? 1 : -1), Boolean(fromProduct));
+          selectProduct(wasHidden ? 0 : selectedProductIndex + (event.key === "ArrowDown" ? 1 : -1), Boolean(fromProduct));
           return;
         }
         if (event.target === saleSearch && event.key === "Enter") {
           event.preventDefault();
           const product = saleProductsEl.querySelectorAll("[data-add-product]")[selectedProductIndex];
-          if (product) addSaleProduct(product.dataset.addProduct);
+          if (product && (!saleProductsEl.hidden || saleSearch.value.trim())) addSaleProduct(product.dataset.addProduct);
+          else if (!saleSearch.value.trim()) announceSale("Digite uma descrição ou um código de barras. Use ↓ para consultar os produtos.");
           else announceSale("Produto não encontrado. Confira o código ou digite outra descrição.");
           return;
         }
@@ -1290,6 +1276,7 @@
   });
 
   document.querySelector("#finish-sale").addEventListener("click", () => openCashierAction("payment"));
+  document.querySelector("#load-sample-sale").addEventListener("click", loadSampleSale);
   document.querySelector("#cashier-back").addEventListener("click", () => closeCashierAction());
   cashierForm.addEventListener("submit", submitCashierAction);
   document.querySelector("#cart-items").addEventListener("focusin", (event) => {
@@ -1302,4 +1289,5 @@
   renderCart();
   navigate(initialHash === "caixa" ? "vendas" : initialHash || "dashboard", { skipHistory: !initialHash || initialHash === "caixa", preserveScroll: true });
   if (initialHash === "caixa") openSale();
+  if (initialHash === "caixa" && new URLSearchParams(location.search).get("demo") === "1") loadSampleSale();
 })();
