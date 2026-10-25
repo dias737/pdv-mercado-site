@@ -1,0 +1,223 @@
+/* Shared reading scale: 16px body, 14px supporting text, 12px overlines. */
+:root {
+  --type-caption: .75rem;
+  --type-small: .875rem;
+  --type-body: 1rem;
+  --type-emphasis: 1.125rem;
+  --type-heading: 1.25rem;
+  --type-title: 1.5rem;
+  --text-secondary: #53657e;
+  --demo-height: 36px;
+  --sidebar-width: 260px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 100%;
+}
+body { font-size: var(--type-body); line-height: 1.5; }
+button, input, select, textarea, kbd { font-family: inherit; }
+
+/* Navigation, tables and management modules share the same sizes. */
+.nav-item, .store-switcher strong, .enterprise-breadcrumb span,
+.profile-button strong, .quick-sale-button, .primary-button,
+.secondary-button, .outline-button, .select-control, .search-control,
+.global-search input, .data-table, .data-table td, .data-table td strong,
+.table-primary strong, .summary-tile__head, .module-side-item strong,
+.module-side-item > span:last-child, .insight-card p, .insight-card button,
+.report-card p, .setting-card p, .report-card button, .setting-card button,
+.network-tabs button, .network-task strong, .register-tile p,
+.search-result strong, .search-empty, .page-header p {
+  font-size: var(--type-body);
+}
+.brand small, .store-switcher small, .nav-section-label, .nav-item__badge,
+.enterprise-breadcrumb strong, .eyebrow, .badge, .data-table th,
+.network-kpi > span, .retail-chart__axis, .retail-bar > span,
+.network-unit > b, .insight-card__label, .demo-strip {
+  font-size: var(--type-caption);
+  letter-spacing: .04em;
+}
+.store-switcher span, .operation-status strong, .operation-status small,
+.support-link, .profile-button small, .card__header p, .table-primary small,
+.summary-tile > small, .module-side-item small, .prototype-footer,
+.network-kpi small, .network-chart__summary small, .network-legend,
+.network-task small, .network-unit small, .network-goal span, .network-foot,
+.register-tile footer, .date-filter, .search-result small, .toast small,
+.global-search > kbd, .quick-sale-button kbd {
+  font-size: var(--type-small);
+}
+.card__header h2, .insight-card h3, .report-card h3, .setting-card h3,
+.register-tile h3, .toast strong { font-size: var(--type-heading); }
+.page-header h1 { font-size: 2rem; line-height: 1.2; }
+.network-kpi > strong, .summary-tile > strong { font-size: 1.75rem; line-height: 1.25; }
+.network-chart__summary strong { font-size: var(--type-title); }
+.network-task > i { font-size: var(--type-small); }
+.summary-tile__head span { font-size: var(--type-body); }
+.summary-tile__head i, .module-side-item__icon, .product-thumb,
+.store-switcher__icon, .avatar, .notification-button i { font-size: var(--type-caption); }
+.report-card small, .profile-button > span:last-child { font-size: var(--type-small); }
+.notification-button i { width: 20px; height: 20px; }
+.nav-item { min-height: 44px; font-weight: 500; }
+.nav-section-label { color: #a2b4cf; }
+.brand small, .operation-status small { color: #a8b8cf; }
+.store-switcher { grid-template-columns: 32px minmax(0,1fr) 28px; }
+.store-switcher strong, .store-switcher span { white-space: normal; overflow: visible; }
+.topbar { gap: 12px; flex-wrap: wrap; }
+.topbar__start { min-width: 0; }
+.global-search { width: min(320px, 30vw); }
+.global-search input, .search-control, .select-control { height: 44px; }
+.primary-button, .secondary-button, .outline-button, .quick-sale-button { min-height: 44px; }
+.date-filter { white-space: normal; }
+.page-header, .card__header { flex-wrap: wrap; }
+.page-header__actions { flex-wrap: wrap; }
+.card__header { gap: 12px; }
+.page-header p, .card__header p, .table-primary small, .summary-tile > small,
+.module-side-item small, .module-side-item > span:last-child, .prototype-footer,
+.network-kpi small, .network-chart__summary small, .network-legend,
+.network-task small, .network-unit small, .network-foot, .register-tile p,
+.register-tile footer, .data-table th, .network-kpi > span,
+.retail-chart__axis, .retail-bar > span { color: var(--text-secondary); }
+.data-table th, .data-table td { padding: 14px 16px; }
+.data-table-wrap { max-width: 100%; }
+.network-unit small { white-space: nowrap; }
+.network-tabs { gap: 20px; }
+.network-filters { flex-wrap: wrap; }
+.network-filters select { max-width: none; min-width: 220px; }
+.network-main { grid-template-columns: minmax(0,1.6fr) minmax(320px,1fr); }
+.network-chart__summary { flex-wrap: wrap; }
+.retail-chart { grid-template-columns: 44px 1fr; }
+.retail-chart__bars { padding-bottom: 26px; }
+.retail-bar > span { bottom: -24px; }
+.register-tile header { flex-wrap: wrap; gap: 8px; }
+.module-toolbar, .module-toolbar__filters { flex-wrap: wrap; }
+.module-toolbar .search-control { min-width: 220px; }
+.demo-strip { line-height: 1.3; padding: 4px 12px; text-align: center; }
+
+/* Cashier: the working information stays readable at every breakpoint. */
+.sale-panel__header h2, .pos-current > strong { font-size: var(--type-title); line-height: 1.25; }
+.sale-panel__header .eyebrow, .pos-session span, .pos-caption,
+.cart__heading .eyebrow { font-size: var(--type-caption); letter-spacing: .035em; }
+.sale-panel__header .eyebrow, .pos-session span { color: #b3c4de; }
+.pos-session strong, .pos-back, .pos-context, .pos-context > span,
+.pos-context b, .pos-context button, .cart-count, .pos-item-number,
+.cart-item__select small, .pos-receipt-head, .pos-receipt-footer,
+.pos-services, .pos-current > small, .pos-unit-values > span,
+.pos-entry > label, .field-help, .cashier-status, .sale-product small,
+.cashier-action p, .cashier-action label, .cashier-help li,
+.cashier-action kbd, .cart-summary kbd, .sale-search kbd, .pos-back kbd {
+  font-size: var(--type-small);
+}
+.cart-item__select strong, .cart-item__price, .quantity-control span,
+.pos-item-unit, .sale-product strong, .sale-product b,
+.cart-summary > div, .cart-summary .primary-button,
+.cashier-action input, .cashier-action select, .cashier-payment-total,
+.cashier-change, .cart-empty small { font-size: var(--type-body); }
+.cart__heading h3 { font-size: var(--type-heading); }
+.sale-search input { height: 48px; font-size: var(--type-emphasis); }
+.pos-unit-values strong { font-size: var(--type-heading); }
+.cart-summary__total > span { font-size: var(--type-small); letter-spacing: .06em; }
+.cart-summary__total strong { font-size: clamp(2.5rem, 4vw, 3.25rem); }
+.cashier-shortcuts button { font-size: var(--type-small); min-height: 62px; padding: 8px 10px; line-height: 1.3; }
+.cashier-shortcuts kbd { font-size: var(--type-emphasis); }
+.cashier-payment-total strong { font-size: 1.75rem; }
+.cashier-action h3 { font-size: var(--type-title); }
+.sale-panel__header { padding: 12px 20px; gap: 16px; }
+.pos-context { padding: 8px 20px; gap: 8px 16px; line-height: 1.5; }
+.pos-context button { padding: 7px 10px; }
+.pos-back { min-height: 44px; }
+.sale-panel__body { grid-template-columns: minmax(0,1.4fr) minmax(380px,1fr); }
+.product-picker { padding: 0; overflow: hidden; }
+.pos-entry { min-height: 0; flex: 1; overflow-y: auto; padding: 16px 18px 8px; }
+.pos-entry > label { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600; }
+.product-picker .cart-summary { flex-shrink: 0; margin-top: 0; padding: 8px 18px 16px; background: #fff; border-top: 1px solid var(--line); }
+.pos-current { margin-bottom: 12px; padding-bottom: 12px; }
+.pos-current > strong { margin-block: 5px; }
+.pos-current > small { color: var(--text-secondary); }
+.pos-unit-values { margin-top: 10px; gap: 14px; }
+.pos-unit-values > span { color: var(--text-secondary); letter-spacing: 0; }
+.pos-unit-values strong { color: #304c72; }
+.pos-entry > label, .pos-entry > label span,
+.field-help, .cashier-status, .pos-caption, .cart__heading .eyebrow,
+.pos-item-number, .cart-item__select small, .pos-item-unit,
+.pos-receipt-head, .pos-receipt-footer, .pos-services { color: var(--text-secondary); }
+.pos-receipt-head, .cart-item { grid-template-columns: 36px minmax(0,1fr) 88px 94px 100px; gap: 10px; padding-inline: 16px; }
+.pos-receipt-head { min-height: 42px; font-size: var(--type-caption); }
+.cart-item { min-height: 76px; padding-block: 12px; }
+.cart-item__select strong { line-height: 1.4; }
+.cart-item__select small { line-height: 1.4; overflow-wrap: anywhere; }
+.quantity-control button { width: 24px; height: 28px; font-size: var(--type-body); color: #3e5b84; }
+.pos-receipt-footer { flex-wrap: wrap; padding: 10px 16px; }
+.pos-services { gap: 6px 16px; padding: 10px 16px; font-size: var(--type-caption); }
+.product-grid { top: calc(100% + 5px); max-height: min(270px, 22dvh); }
+.pos-entry:has(.product-grid:not([hidden])) .pos-current { display: none; }
+.sale-product, .sale-product.is-selected { min-height: 68px; padding: 10px 12px; }
+.field-help { line-height: 1.4; margin: 8px 0; }
+.cashier-status { line-height: 1.4; padding: 8px 10px; margin: 2px 0 12px; }
+.cart-summary > div { margin: 6px 0; color: var(--text-secondary); }
+.cart-summary .cart-summary__total { padding: 12px 16px; }
+.cart-summary .primary-button { min-height: 48px; }
+.cashier-action__buttons { flex-wrap: wrap; }
+.cashier-action__buttons button { flex: 1 1 140px; }
+.cashier-help li { flex-wrap: wrap; gap: 6px 16px; }
+.cashier-help kbd { flex-shrink: 0; }
+
+@media (max-width: 1280px) {
+  .enterprise-breadcrumb { display: none; }
+  .network-main { grid-template-columns: minmax(0,1fr); }
+  .network-tasks { display: block; }
+  .network-kpis { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .pos-session { gap: 16px; }
+  .pos-session > div:nth-child(2) { display: none; }
+}
+@media (max-width: 1120px) {
+  .sale-panel__body { grid-template-columns: minmax(0,1.2fr) minmax(340px,1fr); }
+  .pos-receipt-head, .cart-item { grid-template-columns: 30px minmax(0,1fr) 60px 92px; gap: 8px; padding-inline: 12px; }
+  .quantity-control button { display: none; }
+}
+@media (max-height: 800px) and (min-width: 761px) {
+  .sale-panel__header { padding-block: 8px; }
+  .pos-context { padding-block: 5px; }
+  .pos-current { margin-bottom: 8px; padding-bottom: 8px; }
+  .pos-unit-values > span { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; }
+  .pos-unit-values strong { margin: 0; }
+  .cashier-status { margin-bottom: 8px; }
+  .cashier-shortcuts { padding-block: 8px; }
+}
+@media (max-width: 760px) {
+  :root { --demo-height: 48px; }
+  .global-search { width: 100%; min-width: 0; }
+  .topbar__start { flex: 1; }
+  .topbar { flex-wrap: nowrap; padding: 10px 12px; }
+  .quick-sale-button { width: 44px; min-width: 44px; min-height: 44px; }
+  .topbar__actions { flex-shrink: 0; }
+  .page-header h1 { font-size: 1.75rem; }
+  .network-tabs { gap: 16px; }
+  .network-tabs button { text-align: left; }
+  .network-filters select { width: 100%; min-width: 0; }
+  .network-kpi > strong { font-size: 1.5rem; white-space: normal; overflow-wrap: anywhere; }
+  .network-kpi > span { font-size: var(--type-small); letter-spacing: 0; }
+  .network-legend { font-size: var(--type-small); }
+  .module-toolbar .search-control, .module-toolbar .select-control { min-width: 0; width: 100%; }
+  .sale-panel__header { padding: 10px 12px; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
+  .sale-panel__header h2 { font-size: var(--type-heading); }
+  .pos-brand { flex: 1; min-width: 160px; }
+  .pos-back { padding: 8px 10px; }
+  .pos-back kbd { display: none; }
+  .pos-context { padding: 8px 12px; }
+  .pos-context > span { font-size: var(--type-small); }
+  .pos-context button { font-size: var(--type-small); }
+  .product-picker { min-height: 0; padding: 0; }
+  .pos-entry { overflow: visible; flex: none; padding: 16px 16px 0; }
+  .product-picker .cart-summary { margin-top: 12px; padding: 8px 16px 16px; }
+  .pos-current > strong { font-size: var(--type-title); }
+  .sale-search input { font-size: var(--type-body); padding-left: 40px; padding-right: 42px; }
+  .sale-search kbd { right: 8px; }
+  .cart { min-height: 420px; }
+  .cashier-shortcuts { gap: 6px; padding: 8px; }
+  .cashier-shortcuts button { min-height: 58px; font-size: var(--type-small); padding: 6px; }
+  .cashier-shortcuts kbd { font-size: var(--type-body); }
+  .cashier-action { padding: 20px; }
+  .cashier-action__buttons button { flex-basis: 100%; }
+}
+@media (max-width: 400px) {
+  .pos-receipt-head, .cart-item { grid-template-columns: 24px minmax(0,1fr) 44px 80px; gap: 6px; padding-inline: 10px; }
+  .cashier-shortcuts button { overflow-wrap: anywhere; padding-inline: 4px; }
+  .network-kpis { grid-template-columns: minmax(0,1fr); }
+}

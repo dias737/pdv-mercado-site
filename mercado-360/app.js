@@ -702,9 +702,9 @@
           )
           .join("")
       : '<div class="search-empty">Nenhum produto fictício encontrado.</div>';
-    selectProduct(0);
     saleProductsEl.hidden = !query.trim();
     saleSearch.setAttribute("aria-expanded", String(!saleProductsEl.hidden));
+    selectProduct(0);
   }
 
   function selectProduct(index, moveFocus = false) {
@@ -719,6 +719,7 @@
     const selected = buttons[selectedProductIndex];
     if (selected) {
       saleSearch.setAttribute("aria-activedescendant", selected.id);
+      if (!saleProductsEl.hidden) selected.scrollIntoView?.({ block: "nearest", inline: "nearest" });
       if (moveFocus) selected.focus();
     } else {
       saleSearch.removeAttribute("aria-activedescendant");

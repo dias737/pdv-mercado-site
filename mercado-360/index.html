@@ -13,6 +13,7 @@
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23123b34'/%3E%3Cpath d='M17 45V19h8l7 12 7-12h8v26h-8V31l-7 11-7-11v14z' fill='%23d8f596'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="./styles.css?v=rede-1" />
     <link rel="stylesheet" href="./enterprise.css?v=rede-1" />
+    <link rel="stylesheet" href="./typography.css?v=fontes-1" />
   </head>
   <body>
     <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
@@ -129,6 +130,7 @@
         <div class="pos-context"><span><b id="pos-sale-stage">CAIXA LIVRE</b><i>•</i> Cupom demonstrativo <strong>#008742</strong></span><span>Consumidor não identificado <i>•</i> Tabela de preços: varejo</span><button type="button" id="load-sample-sale">Carregar venda de exemplo</button></div>
         <div class="sale-panel__body">
           <section class="product-picker">
+            <div class="pos-entry">
             <div class="pos-current"><span class="pos-caption">ITEM SELECIONADO</span><strong id="pos-product-name">Caixa disponível</strong><small id="pos-product-code">Aguardando leitura de produto</small><div class="pos-unit-values"><span>QUANTIDADE<strong id="pos-product-quantity">—</strong></span><span>VALOR UNITÁRIO<strong id="pos-product-unit">R$ 0,00</strong></span></div></div>
             <label for="sale-search">Entrada de produto <span>F2</span></label>
             <div class="sale-search">
@@ -145,6 +147,7 @@
               <button class="chip" type="button">Bebidas</button>
             </div>
             <p class="cashier-status" id="sale-status" role="status" aria-live="polite">Caixa pronto. Digite um produto para começar.</p>
+            </div>
             <div class="cart-summary">
               <div><span>Subtotal</span><strong id="cart-subtotal">R$ 0,00</strong></div>
               <div><span>Desconto <kbd>F4</kbd></span><strong class="positive" id="cart-discount">R$ 0,00</strong></div>
@@ -200,6 +203,6 @@
     </div>
 
     <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
-    <script src="./app.js?v=checkup-1"></script>
+    <script src="./app.js?v=fontes-1"></script>
   </body>
 </html>
