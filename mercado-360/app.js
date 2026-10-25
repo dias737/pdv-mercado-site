@@ -4,6 +4,9 @@
   const formatMoney = (value) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
+  const normalizeSearch = (value) =>
+    value.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR");
+
   const navGroups = [
     {
       label: "Visão geral",
@@ -645,9 +648,11 @@
   }
 
   function navigate(page, options = {}) {
-    const valid = page === "dashboard" || page === "relatorios" || page === "configuracoes" || Boolean(modules[page]);
+    const valid = page === "dashboard" || page === "relatorios" || page === "configuracoes" || Object.hasOwn(modules, page);
     activePage = valid ? page : "dashboard";
     renderNavigation();
+    document.querySelector(".enterprise-breadcrumb span").textContent = navGroups
+      .flatMap((group) => group.items).find((item) => item.id === activePage).label;
 
     if (activePage === "dashboard") renderDashboard();
     else if (activePage === "relatorios") renderReports();
@@ -677,10 +682,9 @@
   }
 
   function renderSaleProducts(query = "", category = "Todos") {
-    const normalize = (value) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR");
-    const normalized = normalize(query.trim());
+    const normalized = normalizeSearch(query);
     const filtered = saleProducts.filter((product) => {
-      const matchesQuery = !normalized || normalize(`${product.name} ${product.code}`).includes(normalized);
+      const matchesQuery = !normalized || normalizeSearch(`${product.name} ${product.code}`).includes(normalized);
       const matchesCategory = category === "Todos" || product.category === category || product.code === normalized;
       return matchesQuery && matchesCategory;
     });
@@ -1015,17 +1019,17 @@
   }
 
   function renderGlobalSearch(query) {
-    const normalized = query.trim().toLocaleLowerCase("pt-BR");
+    const normalized = normalizeSearch(query);
     if (!normalized) {
       closeGlobalSearch();
       return;
     }
     const navItems = navGroups.flatMap((group) => group.items.map((item) => ({ ...item, group: group.label })));
     const moduleMatches = navItems
-      .filter((item) => `${item.label} ${item.group}`.toLocaleLowerCase("pt-BR").includes(normalized))
+      .filter((item) => normalizeSearch(`${item.label} ${item.group}`).includes(normalized))
       .map((item) => ({ type: "module", id: item.id, title: item.label, detail: `Módulo • ${item.group}`, icon: item.icon }));
     const productMatches = saleProducts
-      .filter((product) => `${product.name} ${product.code}`.toLocaleLowerCase("pt-BR").includes(normalized))
+      .filter((product) => normalizeSearch(`${product.name} ${product.code}`).includes(normalized))
       .map((product) => ({ type: "product", id: product.id, title: product.name, detail: `Produto fictício • ${product.code}`, icon: product.icon }));
     const matches = [...moduleMatches, ...productMatches].slice(0, 7);
     searchResults.innerHTML = matches.length
@@ -1157,9 +1161,9 @@
     if (event.target.id === "payment-received") updatePayment();
     if (cashierOverlay.contains(event.target)) cashierError.hidden = true;
     if (event.target.matches(".module-search")) {
-      const query = event.target.value.trim().toLocaleLowerCase("pt-BR");
+      const query = normalizeSearch(event.target.value);
       document.querySelectorAll(".module-table tbody tr").forEach((row) => {
-        row.hidden = Boolean(query) && !row.textContent.toLocaleLowerCase("pt-BR").includes(query);
+        row.hidden = Boolean(query) && !normalizeSearch(row.textContent).includes(query);
       });
     }
   });
