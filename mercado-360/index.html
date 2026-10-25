@@ -11,7 +11,7 @@
     />
     <title>Mercado 360 — Gestão inteligente para o varejo</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23123b34'/%3E%3Cpath d='M17 45V19h8l7 12 7-12h8v26h-8V31l-7 11-7-11v14z' fill='%23d8f596'/%3E%3C/svg%3E" />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=caixa-teclado-1" />
   </head>
   <body>
     <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
@@ -90,7 +90,7 @@
           <div class="topbar__actions">
             <button class="quick-sale-button" type="button" data-open-sale>
               <span aria-hidden="true">＋</span>
-              <span>Nova venda</span>
+              <span>Caixa <kbd>F2</kbd></span>
             </button>
             <button class="icon-button notification-button" type="button" data-demo-action="Central de notificações" aria-label="Notificações">
               <span aria-hidden="true">♢</span>
@@ -119,9 +119,10 @@
         <header class="sale-panel__header">
           <div>
             <span class="eyebrow">Venda demonstrativa</span>
-            <h2 id="sale-modal-title">Nova venda</h2>
+            <h2 id="sale-modal-title">Frente de caixa</h2>
+            <p class="cashier-operator">CX-01 · Mariana Costa · Pronto para atender</p>
           </div>
-          <button class="icon-button" type="button" data-close-sale aria-label="Fechar nova venda">×</button>
+          <button class="icon-button" type="button" data-close-sale aria-label="Sair do caixa">×</button>
         </header>
 
         <div class="sale-panel__body">
@@ -129,17 +130,19 @@
             <label for="sale-search">Localizar item</label>
             <div class="sale-search">
               <span aria-hidden="true"></span>
-              <input id="sale-search" type="search" placeholder="Código de barras ou descrição" autocomplete="off" />
+              <input id="sale-search" type="search" placeholder="Código de barras ou descrição" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="sale-products" aria-expanded="true" aria-describedby="sale-search-help" aria-keyshortcuts="F2" />
               <kbd>F2</kbd>
             </div>
-            <p class="field-help">Clique em um produto para adicionar ao carrinho.</p>
+            <p class="field-help" id="sale-search-help">Digite ou leia o código de barras. Use ↑ ↓ para escolher e Enter para adicionar.</p>
             <div class="sale-categories" aria-label="Categorias">
               <button class="chip is-active" type="button">Todos</button>
               <button class="chip" type="button">Mercearia</button>
               <button class="chip" type="button">Hortifruti</button>
               <button class="chip" type="button">Bebidas</button>
             </div>
-            <div class="product-grid" id="sale-products"></div>
+            <div class="product-grid" id="sale-products" role="listbox" aria-label="Produtos encontrados"></div>
+            <p class="cashier-status" id="sale-status" role="status" aria-live="polite">Caixa pronto. Digite um produto para começar.</p>
+            <div class="cashier-tip"><strong>Atendimento sem mouse</strong><span>O foco volta à busca após cada item. Um leitor configurado como teclado com Enter pode preencher o código.</span><small>Experimente o código 7891035001284</small></div>
           </section>
 
           <aside class="cart" aria-label="Carrinho da venda">
@@ -158,20 +161,44 @@
             </div>
             <div class="cart-summary">
               <div><span>Subtotal</span><strong id="cart-subtotal">R$ 0,00</strong></div>
-              <div><span>Descontos</span><strong class="positive">R$ 0,00</strong></div>
+              <div><span>Desconto <kbd>F4</kbd></span><strong class="positive" id="cart-discount">R$ 0,00</strong></div>
               <div class="cart-summary__total"><span>Total</span><strong id="cart-total">R$ 0,00</strong></div>
               <button class="primary-button primary-button--wide" id="finish-sale" type="button" disabled>
                 Ir para pagamento
-                <span aria-hidden="true">→</span>
+                <kbd>F9</kbd>
               </button>
               <small class="demo-disclaimer">Simulação visual: nenhuma cobrança ou registro será realizado.</small>
             </div>
           </aside>
         </div>
+        <nav class="cashier-shortcuts" aria-label="Atalhos do caixa">
+          <button type="button" data-cashier-shortcut="F2"><kbd>F2</kbd> Buscar</button>
+          <button type="button" data-cashier-shortcut="F3"><kbd>F3</kbd> Quantidade</button>
+          <button type="button" data-cashier-shortcut="F4"><kbd>F4</kbd> Desconto</button>
+          <button type="button" data-cashier-shortcut="F6"><kbd>F6</kbd> Itens</button>
+          <button type="button" data-cashier-shortcut="F7"><kbd>F7</kbd> Cancelar venda</button>
+          <button type="button" data-cashier-shortcut="F8"><kbd>F8</kbd> Remover item</button>
+          <button type="button" data-cashier-shortcut="F9"><kbd>F9</kbd> Pagamento</button>
+          <button type="button" data-cashier-shortcut="F10"><kbd>F10</kbd> Ajuda</button>
+          <span><kbd>Esc</kbd> Sair · cupom mantido</span>
+        </nav>
+      </div>
+      <div class="cashier-overlay" id="cashier-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="cashier-action-title" aria-describedby="cashier-action-description">
+        <form class="cashier-action" id="cashier-form" novalidate>
+          <span class="eyebrow">Frente de caixa · demonstração</span>
+          <h3 id="cashier-action-title"></h3>
+          <p id="cashier-action-description"></p>
+          <div id="cashier-action-fields"></div>
+          <p id="cashier-action-error" class="cashier-error" role="alert" hidden></p>
+          <div class="cashier-action__buttons">
+            <button class="secondary-button" type="button" id="cashier-back">Voltar <kbd>Esc</kbd></button>
+            <button class="primary-button" type="submit" id="cashier-confirm">Confirmar <kbd>Enter</kbd></button>
+          </div>
+        </form>
       </div>
     </div>
 
     <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
-    <script src="./app.js"></script>
+    <script src="./app.js?v=caixa-teclado-1"></script>
   </body>
 </html>

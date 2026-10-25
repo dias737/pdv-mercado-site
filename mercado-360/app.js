@@ -353,6 +353,11 @@
   const cart = new Map();
   let activePage = "dashboard";
   let returnFocus = null;
+  let selectedProductIndex = 0;
+  let selectedCartId = null;
+  let discountCents = 0;
+  let cashierAction = null;
+  let actionReturnFocus = null;
 
   const primaryNav = document.querySelector("#primary-nav");
   const pageContent = document.querySelector("#page-content");
@@ -362,6 +367,10 @@
   const saleProductsEl = document.querySelector("#sale-products");
   const searchInput = document.querySelector("#global-search");
   const searchResults = document.querySelector("#search-results");
+  const cashierOverlay = document.querySelector("#cashier-overlay");
+  const cashierForm = document.querySelector("#cashier-form");
+  const cashierFields = document.querySelector("#cashier-action-fields");
+  const cashierError = document.querySelector("#cashier-action-error");
 
   function renderNavigation() {
     primaryNav.innerHTML = navGroups
@@ -727,17 +736,19 @@
   }
 
   function renderSaleProducts(query = "", category = "Todos") {
-    const normalized = query.trim().toLocaleLowerCase("pt-BR");
+    const normalize = (value) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR");
+    const normalized = normalize(query.trim());
     const filtered = saleProducts.filter((product) => {
-      const matchesQuery = !normalized || `${product.name} ${product.code}`.toLocaleLowerCase("pt-BR").includes(normalized);
-      const matchesCategory = category === "Todos" || product.category === category;
+      const matchesQuery = !normalized || normalize(`${product.name} ${product.code}`).includes(normalized);
+      const matchesCategory = category === "Todos" || product.category === category || product.code === normalized;
       return matchesQuery && matchesCategory;
     });
+    selectedProductIndex = 0;
     saleProductsEl.innerHTML = filtered.length
       ? filtered
           .map(
             (product) => `
-              <button class="sale-product" type="button" data-add-product="${product.id}">
+              <button class="sale-product" type="button" id="sale-option-${product.id}" data-add-product="${product.id}" role="option" aria-selected="false" tabindex="-1">
                 <span class="sale-product__icon" aria-hidden="true">${product.icon}</span>
                 <strong>${product.name}</strong>
                 <small>${product.code}</small>
@@ -746,6 +757,76 @@
           )
           .join("")
       : '<div class="search-empty">Nenhum produto fictício encontrado.</div>';
+    selectProduct(0);
+  }
+
+  function selectProduct(index, moveFocus = false) {
+    const buttons = [...saleProductsEl.querySelectorAll("[data-add-product]")];
+    selectedProductIndex = Math.max(0, Math.min(index, buttons.length - 1));
+    buttons.forEach((button, position) => {
+      const selected = position === selectedProductIndex;
+      button.classList.toggle("is-selected", selected);
+      button.setAttribute("aria-selected", String(selected));
+      button.tabIndex = selected ? 0 : -1;
+    });
+    const selected = buttons[selectedProductIndex];
+    if (selected) {
+      saleSearch.setAttribute("aria-activedescendant", selected.id);
+      if (moveFocus) selected.focus();
+    } else {
+      saleSearch.removeAttribute("aria-activedescendant");
+    }
+  }
+
+  function announceSale(message) {
+    document.querySelector("#sale-status").textContent = message;
+  }
+
+  function focusSaleSearch() {
+    saleSearch.focus();
+    saleSearch.select();
+  }
+
+  function resetProductSearch() {
+    saleSearch.value = "";
+    document.querySelectorAll(".sale-categories .chip").forEach((chip, index) => chip.classList.toggle("is-active", index === 0));
+    renderSaleProducts();
+    focusSaleSearch();
+  }
+
+  function totals() {
+    const subtotal = [...cart.entries()].reduce((sum, [id, quantity]) => {
+      const product = saleProducts.find((item) => item.id === id);
+      return sum + Math.round(Math.round(product.price * 100) * quantity);
+    }, 0);
+    return { subtotal, discount: Math.min(discountCents, subtotal), total: subtotal - Math.min(discountCents, subtotal) };
+  }
+
+  function selectCart(id, moveFocus = false) {
+    selectedCartId = cart.has(id) ? id : [...cart.keys()].at(-1) || null;
+    document.querySelectorAll("[data-cart-id]").forEach((row) => {
+      const selected = row.dataset.cartId === selectedCartId;
+      row.classList.toggle("is-selected", selected);
+      const button = row.querySelector("[data-select-cart]");
+      button.setAttribute("aria-pressed", String(selected));
+      button.tabIndex = selected ? 0 : -1;
+      if (selected && moveFocus) button.focus();
+    });
+  }
+
+  function addSaleProduct(id) {
+    const product = saleProducts.find((item) => item.id === id);
+    if (!product) return;
+    const next = Math.round(((cart.get(id) || 0) + 1) * 1000) / 1000;
+    if (next > 9999) {
+      announceSale("Quantidade máxima por item: 9.999. Use F3 para ajustar.");
+      return;
+    }
+    cart.set(id, next);
+    selectedCartId = id;
+    renderCart();
+    resetProductSearch();
+    announceSale(`${product.name} adicionado. Total do cupom: ${formatMoney(totals().total / 100)}.`);
   }
 
   function renderCart() {
@@ -757,20 +838,23 @@
     const finishButton = document.querySelector("#finish-sale");
     const entries = [...cart.entries()];
     const itemCount = entries.reduce((sum, [, quantity]) => sum + quantity, 0);
-    const total = entries.reduce((sum, [id, quantity]) => sum + saleProducts.find((product) => product.id === id).price * quantity, 0);
+    const amounts = totals();
+    discountCents = amounts.discount;
 
     itemsEl.innerHTML = entries
       .map(([id, quantity]) => {
         const product = saleProducts.find((item) => item.id === id);
         return `
-          <div class="cart-item">
+          <div class="cart-item" data-cart-id="${id}">
             <div>
-              <strong>${product.name}</strong>
-              <small>${formatMoney(product.price)} cada</small>
+              <button type="button" class="cart-item__select" data-select-cart="${id}" aria-pressed="false">
+                <strong>${product.name}</strong>
+                <small>${formatMoney(product.price)} / ${id === "p4" ? "kg" : "un."} · F3 quantidade</small>
+              </button>
               <div class="quantity-control" aria-label="Quantidade de ${product.name}">
-                <button type="button" data-cart-change="-1" data-product-id="${id}" aria-label="Diminuir quantidade">−</button>
-                <span>${quantity}</span>
-                <button type="button" data-cart-change="1" data-product-id="${id}" aria-label="Aumentar quantidade">＋</button>
+                <button type="button" data-cart-change="-1" data-product-id="${id}" aria-label="Diminuir quantidade de ${product.name}">−</button>
+                <span>${quantity.toLocaleString("pt-BR", { maximumFractionDigits: 3 })}</span>
+                <button type="button" data-cart-change="1" data-product-id="${id}" aria-label="Aumentar quantidade de ${product.name}">＋</button>
               </div>
             </div>
             <span class="cart-item__price">${formatMoney(product.price * quantity)}</span>
@@ -779,26 +863,190 @@
       .join("");
     emptyEl.style.display = entries.length ? "none" : "grid";
     itemsEl.style.display = entries.length ? "block" : "none";
-    countEl.textContent = `${itemCount} ${itemCount === 1 ? "item" : "itens"}`;
-    subtotalEl.textContent = formatMoney(total);
-    totalEl.textContent = formatMoney(total);
+    countEl.textContent = `${entries.length} ${entries.length === 1 ? "produto" : "produtos"}`;
+    subtotalEl.textContent = formatMoney(amounts.subtotal / 100);
+    document.querySelector("#cart-discount").textContent = formatMoney(amounts.discount / 100);
+    totalEl.textContent = formatMoney(amounts.total / 100);
     finishButton.disabled = itemCount === 0;
+    selectCart(selectedCartId);
   }
 
   function openSale(trigger) {
+    if (!saleModal.hidden) {
+      focusSaleSearch();
+      return;
+    }
     returnFocus = trigger || document.activeElement;
+    closeGlobalSearch();
     saleModal.hidden = false;
     document.body.classList.add("modal-open");
-    renderSaleProducts();
+    document.querySelector(".app-shell").inert = true;
+    resetProductSearch();
     renderCart();
-    window.setTimeout(() => saleSearch.focus(), 0);
   }
 
   function closeSale() {
+    closeCashierAction(false);
     saleModal.hidden = true;
     document.body.classList.remove("modal-open");
+    document.querySelector(".app-shell").inert = false;
     saleSearch.value = "";
     if (returnFocus && typeof returnFocus.focus === "function") returnFocus.focus();
+  }
+
+  function closeCashierAction(restoreFocus = true) {
+    cashierOverlay.hidden = true;
+    document.querySelector(".sale-panel").inert = false;
+    cashierAction = null;
+    if (restoreFocus) {
+      if (actionReturnFocus?.isConnected && actionReturnFocus.offsetParent !== null) actionReturnFocus.focus();
+      else focusSaleSearch();
+    }
+  }
+
+  function requireCart() {
+    if (cart.size) return true;
+    announceSale("Adicione um produto antes de continuar. F2 busca; Enter adiciona.");
+    focusSaleSearch();
+    return false;
+  }
+
+  function openCashierAction(kind) {
+    if (cashierAction) return;
+    if (kind !== "help" && !requireCart()) return;
+    selectCart(selectedCartId);
+    const product = saleProducts.find((item) => item.id === selectedCartId);
+    const amounts = totals();
+    const definitions = {
+      quantity: {
+        title: "Alterar quantidade",
+        description: product ? `${product.name} · ${product.id === "p4" ? "Peso em kg, com até 3 casas decimais." : "Informe a quantidade de unidades."}` : "",
+        fields: `<label for="cashier-value">Quantidade</label><input id="cashier-value" inputmode="decimal" autocomplete="off" value="${String(cart.get(selectedCartId) || 1).replace(".", ",")}" />`,
+      },
+      discount: {
+        title: "Desconto no cupom",
+        description: `Informe o valor em reais. Subtotal: ${formatMoney(amounts.subtotal / 100)}.`,
+        fields: `<label for="cashier-value">Desconto (R$)</label><input id="cashier-value" inputmode="decimal" autocomplete="off" value="${(discountCents / 100).toFixed(2).replace(".", ",")}" />`,
+      },
+      remove: { title: "Remover item?", description: product ? `${product.name} será retirado deste cupom. Enter confirma; Esc mantém o item.` : "", fields: "" },
+      cancel: { title: "Cancelar esta venda?", description: "Todos os itens e o desconto deste cupom serão removidos. Enter confirma; Esc mantém a venda.", fields: "" },
+      payment: {
+        title: "Pagamento",
+        description: "Escolha a forma com ↑ ↓. Tab avança; Enter ou F9 conclui a simulação.",
+        fields: `<div class="cashier-payment-total"><span>Total a pagar</span><strong>${formatMoney(amounts.total / 100)}</strong></div>
+          <label for="payment-method">Forma de pagamento</label>
+          <select id="payment-method"><option value="cash">Dinheiro</option><option value="pix">Pix</option><option value="debit">Cartão de débito</option><option value="credit">Cartão de crédito</option></select>
+          <div id="payment-cash-fields"><label for="payment-received">Valor recebido (R$)</label><input id="payment-received" inputmode="decimal" autocomplete="off" placeholder="0,00" /><output class="cashier-change" id="payment-change" aria-live="polite">Informe o valor recebido.</output></div>`,
+      },
+      help: {
+        title: "Caixa pelo teclado",
+        description: "Os atalhos abaixo funcionam com o caixa aberto. F2 também abre o caixa em qualquer tela.",
+        fields: `<ul class="cashier-help">${[
+          ["F2", "Buscar produto / ler código"], ["↑ ↓ / Enter", "Escolher / adicionar produto"],
+          ["F3", "Quantidade do item selecionado"], ["F4", "Desconto em reais"],
+          ["F6 e ↑ ↓", "Selecionar item do cupom"], ["F7", "Cancelar venda, com confirmação"],
+          ["F8", "Remover item, com confirmação"], ["F9", "Pagamento / concluir simulação"],
+          ["Tab / Shift + Tab", "Próximo / campo anterior"], ["Esc", "Voltar; ao sair, mantém o cupom"],
+        ].map(([key, text]) => `<li><kbd>${key}</kbd><span>${text}</span></li>`).join("")}</ul><p>Em alguns notebooks, use Fn junto das teclas F.</p>`,
+      },
+    };
+    const definition = definitions[kind];
+    if (!definition) return;
+    actionReturnFocus = document.activeElement;
+    cashierAction = kind;
+    document.querySelector("#cashier-action-title").textContent = definition.title;
+    document.querySelector("#cashier-action-description").textContent = definition.description;
+    cashierFields.innerHTML = definition.fields;
+    cashierError.hidden = true;
+    const confirmButton = document.querySelector("#cashier-confirm");
+    confirmButton.innerHTML = kind === "payment" ? "Concluir simulação <kbd>F9</kbd>" : kind === "help" ? "Entendi <kbd>Enter</kbd>" : "Confirmar <kbd>Enter</kbd>";
+    document.querySelector(".sale-panel").inert = true;
+    cashierOverlay.hidden = false;
+    const field = cashierFields.querySelector("input, select") || confirmButton;
+    field.focus();
+    if (field.tagName === "INPUT") field.select();
+  }
+
+  function parseDecimal(value, decimals = 2) {
+    const normalized = value.trim().replace(",", ".");
+    const pattern = decimals === 0 ? /^\d+$/ : new RegExp("^\\d+(?:\\.\\d{1," + decimals + "})?$");
+    return pattern.test(normalized) ? Number(normalized) : NaN;
+  }
+
+  function actionError(message, fieldId) {
+    cashierError.textContent = message;
+    cashierError.hidden = false;
+    const field = document.getElementById(fieldId);
+    if (field) { field.focus(); field.select?.(); }
+  }
+
+  function updatePayment() {
+    if (cashierAction !== "payment") return;
+    const cash = document.querySelector("#payment-method").value === "cash";
+    document.querySelector("#payment-cash-fields").hidden = !cash;
+    const received = Math.round(parseDecimal(document.querySelector("#payment-received").value) * 100);
+    const change = received - totals().total;
+    document.querySelector("#payment-change").textContent = !Number.isFinite(received) ? "Informe o valor recebido." : change < 0 ? `Faltam ${formatMoney(-change / 100)}` : `Troco: ${formatMoney(change / 100)}`;
+  }
+
+  function submitCashierAction(event) {
+    event.preventDefault();
+    if (!cashierAction) return;
+    const kind = cashierAction;
+    if (kind === "help") { closeCashierAction(); return; }
+    const value = document.querySelector("#cashier-value")?.value || "";
+    if (kind === "quantity") {
+      const quantity = parseDecimal(value, selectedCartId === "p4" ? 3 : 0);
+      if (!Number.isFinite(quantity) || quantity <= 0 || quantity > 9999) {
+        actionError(selectedCartId === "p4" ? "Informe um peso de 0,001 a 9.999 kg, com até 3 casas decimais." : "Informe uma quantidade inteira de 1 a 9.999.", "cashier-value");
+        return;
+      }
+      cart.set(selectedCartId, quantity);
+    } else if (kind === "discount") {
+      const amount = parseDecimal(value);
+      if (!Number.isFinite(amount) || Math.round(amount * 100) > totals().subtotal) {
+        actionError("Informe um desconto de zero até o subtotal, com no máximo 2 casas decimais.", "cashier-value");
+        return;
+      }
+      discountCents = Math.round(amount * 100);
+    } else if (kind === "remove") {
+      cart.delete(selectedCartId);
+    } else if (kind === "cancel") {
+      cart.clear();
+      discountCents = 0;
+    } else if (kind === "payment") {
+      const paymentMethod = document.querySelector("#payment-method");
+      const received = Math.round(parseDecimal(document.querySelector("#payment-received").value) * 100);
+      const total = totals().total;
+      if (paymentMethod.value === "cash" && (!Number.isSafeInteger(received) || received < total || received > 100000000)) {
+        actionError("Informe um valor recebido suficiente para pagar o total, até R$ 1.000.000,00.", "payment-received");
+        return;
+      }
+      const change = paymentMethod.value === "cash" ? ` · Troco ${formatMoney((received - total) / 100)}` : "";
+      const message = `Venda simulada: ${formatMoney(total / 100)} · ${paymentMethod.selectedOptions[0].text}${change}. Caixa pronto para a próxima venda.`;
+      cart.clear();
+      discountCents = 0;
+      closeCashierAction(false);
+      renderCart();
+      resetProductSearch();
+      announceSale(message);
+      showToast("Venda simulada concluída", message);
+      return;
+    }
+    closeCashierAction(false);
+    renderCart();
+    resetProductSearch();
+    announceSale(kind === "cancel" ? "Venda cancelada. Caixa pronto para um novo atendimento." : `Cupom atualizado. Total: ${formatMoney(totals().total / 100)}.`);
+  }
+
+  function cashierShortcut(key) {
+    if (key === "F2") { focusSaleSearch(); return; }
+    if (key === "F6") {
+      if (requireCart()) selectCart(selectedCartId, true);
+      return;
+    }
+    const actions = { F3: "quantity", F4: "discount", F7: "cancel", F8: "remove", F9: "payment", F10: "help" };
+    if (actions[key]) openCashierAction(actions[key]);
   }
 
   function renderGlobalSearch(query) {
@@ -875,19 +1123,33 @@
 
     const addProduct = event.target.closest("[data-add-product]");
     if (addProduct) {
-      const id = addProduct.dataset.addProduct;
-      cart.set(id, (cart.get(id) || 0) + 1);
-      renderCart();
+      addSaleProduct(addProduct.dataset.addProduct);
+      return;
+    }
+
+    const shortcut = event.target.closest("[data-cashier-shortcut]");
+    if (shortcut) {
+      cashierShortcut(shortcut.dataset.cashierShortcut);
+      return;
+    }
+
+    const selectItem = event.target.closest("[data-select-cart]");
+    if (selectItem) {
+      selectCart(selectItem.dataset.selectCart);
       return;
     }
 
     const cartChange = event.target.closest("[data-cart-change]");
     if (cartChange) {
       const id = cartChange.dataset.productId;
-      const next = (cart.get(id) || 0) + Number(cartChange.dataset.cartChange);
-      if (next <= 0) cart.delete(id);
-      else cart.set(id, next);
+      const change = Number(cartChange.dataset.cartChange);
+      const next = Math.round(((cart.get(id) || 0) + change) * 1000) / 1000;
+      selectCart(id);
+      if (next <= 0) { openCashierAction("remove"); return; }
+      if (next > 9999) { announceSale("Quantidade máxima por item: 9.999."); return; }
+      cart.set(id, next);
       renderCart();
+      document.querySelector(`[data-product-id="${id}"][data-cart-change="${change}"]`)?.focus();
       return;
     }
 
@@ -920,6 +1182,8 @@
       const category = document.querySelector(".sale-categories .chip.is-active")?.textContent.trim() || "Todos";
       renderSaleProducts(saleSearch.value, category);
     }
+    if (event.target.id === "payment-received") updatePayment();
+    if (cashierOverlay.contains(event.target)) cashierError.hidden = true;
     if (event.target.matches(".module-search")) {
       const query = event.target.value.trim().toLocaleLowerCase("pt-BR");
       document.querySelectorAll(".module-table tbody tr").forEach((row) => {
@@ -929,33 +1193,92 @@
   });
 
   document.addEventListener("change", (event) => {
+    if (event.target.id === "payment-method") {
+      cashierError.hidden = true;
+      updatePayment();
+    }
     if (event.target.matches(".demo-filter")) {
       showToast(`Filtro: ${event.target.value}`, "A seleção foi aplicada somente à visualização demonstrativa.");
     }
   });
 
   document.addEventListener("keydown", (event) => {
+    if (event.isComposing) return;
+    const plainFunctionKey = !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey;
+    if (saleModal.hidden && event.key === "F2" && plainFunctionKey) {
+      event.preventDefault();
+      if (!event.repeat) openSale(document.activeElement);
+      return;
+    }
     if ((event.metaKey || event.ctrlKey) && event.key.toLocaleLowerCase() === "k") {
       event.preventDefault();
-      searchInput.focus();
+      if (saleModal.hidden) searchInput.focus();
+      else if (!cashierAction) focusSaleSearch();
+      return;
     }
-    if (!saleModal.hidden && event.key === "Tab") {
-      const focusable = [...saleModal.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex="0"]')].filter(
-        (element) => element.offsetParent !== null,
-      );
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
+    if (!saleModal.hidden) {
+      if (event.key === "Escape") {
         event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
+        if (cashierAction) closeCashierAction();
+        else closeSale();
+        return;
       }
+      const functionKeys = ["F2", "F3", "F4", "F6", "F7", "F8", "F9", "F10"];
+      if (plainFunctionKey && functionKeys.includes(event.key)) {
+        event.preventDefault();
+        if (event.repeat) return;
+        if (cashierAction) {
+          if (event.key === "F9" && cashierAction === "payment") cashierForm.requestSubmit();
+        } else cashierShortcut(event.key);
+        return;
+      }
+      if (event.key === "Enter" && event.repeat) {
+        event.preventDefault();
+        return;
+      }
+      if (!cashierAction) {
+        const fromProduct = event.target.closest("[data-add-product]");
+        const fromCart = event.target.closest("[data-select-cart]");
+        if ((event.target === saleSearch || fromProduct) && ["ArrowDown", "ArrowUp"].includes(event.key)) {
+          event.preventDefault();
+          if (fromProduct) selectedProductIndex = [...saleProductsEl.querySelectorAll("[data-add-product]")].indexOf(fromProduct);
+          selectProduct(selectedProductIndex + (event.key === "ArrowDown" ? 1 : -1), Boolean(fromProduct));
+          return;
+        }
+        if (event.target === saleSearch && event.key === "Enter") {
+          event.preventDefault();
+          const product = saleProductsEl.querySelectorAll("[data-add-product]")[selectedProductIndex];
+          if (product) addSaleProduct(product.dataset.addProduct);
+          else announceSale("Produto não encontrado. Confira o código ou digite outra descrição.");
+          return;
+        }
+        if (fromCart && ["ArrowDown", "ArrowUp"].includes(event.key)) {
+          event.preventDefault();
+          const ids = [...cart.keys()];
+          const next = Math.max(0, Math.min(ids.length - 1, ids.indexOf(fromCart.dataset.selectCart) + (event.key === "ArrowDown" ? 1 : -1)));
+          selectCart(ids[next], true);
+          return;
+        }
+      }
+      if (event.key === "Tab") {
+        const scope = cashierAction ? cashierOverlay : saleModal;
+        const focusable = [...scope.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex="0"]')].filter(
+          (element) => element.tabIndex >= 0 && element.offsetParent !== null && !element.closest("[inert]"),
+        );
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && (document.activeElement === first || !scope.contains(document.activeElement))) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && (document.activeElement === last || !scope.contains(document.activeElement))) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }
+      return;
     }
     if (event.key === "Escape") {
-      if (!saleModal.hidden) closeSale();
-      else closeGlobalSearch();
+      closeGlobalSearch();
     }
     if (event.key === "Enter" && event.target.matches(".report-card")) event.target.click();
   });
@@ -966,16 +1289,17 @@
     menuToggle.setAttribute("aria-expanded", String(next));
   });
 
-  document.querySelector("#finish-sale").addEventListener("click", () => {
-    if (!cart.size) return;
-    cart.clear();
-    renderCart();
-    closeSale();
-    showToast("Venda simulada concluída", "Nenhum pagamento foi processado e nenhum registro foi criado.");
+  document.querySelector("#finish-sale").addEventListener("click", () => openCashierAction("payment"));
+  document.querySelector("#cashier-back").addEventListener("click", () => closeCashierAction());
+  cashierForm.addEventListener("submit", submitCashierAction);
+  document.querySelector("#cart-items").addEventListener("focusin", (event) => {
+    const row = event.target.closest("[data-cart-id]");
+    if (row) selectCart(row.dataset.cartId);
   });
 
   const initialHash = window.location.hash.replace("#", "");
   renderSaleProducts();
   renderCart();
-  navigate(initialHash || "dashboard", { skipHistory: !initialHash, preserveScroll: true });
+  navigate(initialHash === "caixa" ? "vendas" : initialHash || "dashboard", { skipHistory: !initialHash || initialHash === "caixa", preserveScroll: true });
+  if (initialHash === "caixa") openSale();
 })();
